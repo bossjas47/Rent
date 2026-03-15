@@ -297,68 +297,89 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="hero-section" style="padding-top: 100px;">
-        <h1 class="hero-title-scaled font-extrabold mb-3 bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent">
+    <!-- ========================================== -->
+    <!-- STATS SECTION (ย้ายขึ้นมาบนสุด) -->
+    <!-- ========================================== -->
+    <div class="w-full max-w-6xl mx-auto px-4 pt-24 pb-6">
+        <div class="stats-header-v2 mb-4">
+            <div class="flex items-center gap-3 justify-center md:justify-start">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-sky-500/30">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">สถิติการใช้งาน</h2>
+                    <p id="serviceAge" class="text-xs text-slate-500">กำลังโหลด...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-grid-v2">
+            <div class="stat-card-v2 stat-today">
+                <div class="stat-icon-bg"><i class="fa-solid fa-sun"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">วันนี้</span>
+                    <span class="stat-value" id="statToday">0</span>
+                </div>
+                <div class="stat-trend up"><i class="fa-solid fa-arrow-trend-up"></i></div>
+            </div>
+
+            <div class="stat-card-v2 stat-week">
+                <div class="stat-icon-bg"><i class="fa-solid fa-calendar-week"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">สัปดาห์นี้</span>
+                    <span class="stat-value" id="statWeek">0</span>
+                </div>
+                <div class="stat-trend"><i class="fa-solid fa-minus"></i></div>
+            </div>
+
+            <div class="stat-card-v2 stat-month">
+                <div class="stat-icon-bg"><i class="fa-solid fa-calendar-days"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">เดือนนี้</span>
+                    <span class="stat-value" id="statMonth">0</span>
+                </div>
+                <div class="stat-trend"><i class="fa-solid fa-minus"></i></div>
+            </div>
+
+            <div class="stat-card-v2 stat-total">
+                <div class="stat-icon-bg"><i class="fa-solid fa-trophy"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">ทั้งหมด</span>
+                    <span class="stat-value" id="statTotal">0</span>
+                </div>
+                <div class="stat-trend up"><i class="fa-solid fa-crown"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- HERO SECTION (จัดกึ่งกลาง + ไม่ชนขอบ) -->
+    <!-- ========================================== -->
+    <div class="w-full max-w-4xl mx-auto px-4 py-8 text-center">
+        <h1 class="text-3xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent leading-tight">
             Best Website E-commerce
         </h1>
-        <p class="hero-subtitle-scaled font-semibold text-indigo-500 mb-4">Panderx Studio</p>
-        <p class="hero-desc-scaled text-slate-600 max-w-md mx-auto mb-8">
+        <p class="text-lg md:text-2xl font-semibold text-indigo-500 mb-4">Panderx Studio</p>
+        <p class="text-sm md:text-base text-slate-600 max-w-lg mx-auto mb-8 leading-relaxed px-4">
             เริ่มต้นได้แล้ววันนี้ เช่าครั้งแรกราคาเพียง 99 บาททุกราคา!!
         </p>
-        <div class="hero-btns">
-            <button onclick="window.location.href='./homerent.html'" class="btn-liquid-glass px-8 py-3 text-lg font-bold text-white rounded-full">
-                เช่าเลย
+        
+        <!-- ปุ่มจัดกึ่งกลาง + มี gap -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 px-4">
+            <button onclick="window.location.href='./homerent.html'" class="btn-liquid-glass w-full sm:w-auto px-8 py-3 text-base font-bold text-white rounded-full shadow-lg shadow-sky-500/30">
+                <i class="fa-solid fa-rocket mr-2"></i>เช่าเลย
             </button>
-            <button id="heroLoginBtn" onclick="window.location.href='./login.html'" class="btn-liquid-white px-8 py-3 text-lg font-bold rounded-full" style="display:none;">
-                เข้าสู่ระบบ
+            <button id="heroLoginBtn" onclick="window.location.href='./login.html'" class="btn-liquid-white w-full sm:w-auto px-8 py-3 text-base font-bold rounded-full hidden" style="display:none;">
+                <i class="fa-solid fa-right-to-bracket mr-2"></i>เข้าสู่ระบบ
             </button>
         </div>
     </div>
 
-    <!-- Stats Section -->
-    <div class="w-full max-w-6xl mx-auto px-4 pb-6">
-        <div class="stats-header">
-            <div>
-                <div class="stats-title">สถิติการใช้งาน</div>
-                <div id="serviceAge" class="stats-subtitle">กำลังโหลด...</div>
-            </div>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-card stat-card-1">
-                <div class="stat-card-label">วันนี้</div>
-                <div class="stat-card-value" id="statToday">0</div>
-            </div>
-            <div class="stat-card stat-card-2">
-                <div class="stat-card-label">สัปดาห์นี้</div>
-                <div class="stat-card-value" id="statWeek">0</div>
-            </div>
-            <div class="stat-card stat-card-3">
-                <div class="stat-card-label">เดือนนี้</div>
-                <div class="stat-card-value" id="statMonth">0</div>
-            </div>
-            <div class="stat-card stat-card-4">
-                <div class="stat-card-label">ทั้งหมด</div>
-                <div class="stat-card-value" id="statTotal">0</div>
-            </div>
-        </div>
-    </div>
+    <!-- ========================================== -->
+    <!-- ลบสินค้าแนะนำออก -->
+    <!-- ========================================== -->
 
-    <!-- Products Section -->
-    <div class="w-full max-w-6xl mx-auto px-4 pb-12">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-bold text-slate-800">สินค้าแนะนำ</h2>
-        </div>
-        <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <!-- Loading State -->
-            <div class="col-span-full flex items-center justify-center py-12 text-slate-400 gap-3">
-                <div class="w-6 h-6 border-2 border-slate-200 border-t-sky-500 rounded-full animate-spin"></div>
-                <span>กำลังโหลดสินค้า...</span>
-            </div>
-        </div>
-    </div>
-
-    <footer class="w-full max-w-6xl mx-auto px-4 py-6 text-center text-slate-400 text-sm">
+    <footer class="w-full max-w-6xl mx-auto px-4 py-8 text-center text-slate-400 text-sm mt-8 border-t border-slate-200">
         <p>&copy; 2026 PanderX. All rights reserved.</p>
     </footer>
 

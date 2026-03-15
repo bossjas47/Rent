@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load data
     setTimeout(() => {
         loadStats();
-        loadProducts();
+        // loadProducts(); // ลบออก
     }, 100);
     
     // Close dropdown when click outside
