@@ -1,24 +1,5 @@
-### แก้ใน homerent.html
+### แก้ใน homerent.html (CSS Style) — แทนที่ <style> ทั้งหมด
 
-```html
-<div class="action-btns">
-    <button class="btn-action btn-black">
-        <i class="fa-solid fa-plus" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-        สร้างร้านค้า
-    </button>
-    <button class="btn-action btn-white">
-        <i class="fa-solid fa-filter" style="color: #38bdf8;"></i>
-        ฟิลเตอร์
-    </button>
-    <button class="btn-action btn-white">
-        <i class="fa-solid fa-eye" style="color: #818cf8;"></i>
-        แสดงคอลัมน์
-    </button>
-</div>
-
-```
-
-### แก้ใน homerent.css
 ```css
 <style>
     :root {
@@ -68,7 +49,6 @@
     .breadcrumb a:hover { color: #0284c7; }
     .breadcrumb span { color: #94a3b8; }
 
-    /* Liquid Glass Search Bar */
     .search-bar-container {
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(20px);
@@ -79,15 +59,13 @@
         align-items: center;
         gap: 12px;
         border: 1px solid rgba(255, 255, 255, 0.9);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), 
-                    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
         margin-bottom: 20px;
         transition: all 0.3s ease;
     }
     
     .search-bar-container:focus-within {
-        box-shadow: 0 8px 30px rgba(56, 189, 248, 0.15), 
-                    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        box-shadow: 0 8px 30px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6);
         border-color: rgba(56, 189, 248, 0.3);
         transform: translateY(-1px);
     }
@@ -103,7 +81,6 @@
     }
     .search-input::placeholder { color: #94a3b8; }
 
-    /* Liquid Glass Action Buttons */
     .action-btns {
         display: flex;
         gap: 12px;
@@ -131,9 +108,7 @@
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
     
-    .btn-action:active {
-        transform: translateY(0);
-    }
+    .btn-action:active { transform: translateY(0); }
 
     .btn-black {
         background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
@@ -141,9 +116,7 @@
         box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
     }
     
-    .btn-black:hover {
-        box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
-    }
+    .btn-black:hover { box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4); }
     
     .btn-white {
         background: rgba(255, 255, 255, 0.7);
@@ -158,7 +131,6 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     }
     
-    /* Liquid Glass Data Table */
     .data-table-container {
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(20px);
@@ -194,27 +166,27 @@
         transition: background 0.2s;
     }
     
-    .data-table tr:hover td {
-        background: rgba(56, 189, 248, 0.03);
-    }
+    .data-table tr:hover td { background: rgba(56, 189, 248, 0.03); }
+    .data-table tr:last-child td { border-bottom: none; }
     
-    .data-table tr:last-child td {
-        border-bottom: none;
-    }
-    
-    /* Glass Empty State */
     .empty-state {
         padding: 80px 20px;
         text-align: center;
         color: #94a3b8;
-        background: rgba(255, 255, 255, 0.4);
-        backdrop-filter: blur(10px);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.4) 100%);
+        background-size: 200% 100%;
+        animation: shimmer 3s infinite;
         border-radius: 16px;
         margin: 20px;
         border: 2px dashed rgba(148, 163, 184, 0.3);
+        backdrop-filter: blur(10px);
     }
     
-    /* Liquid Glass Pagination */
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    
     .pagination {
         display: flex;
         justify-content: space-between;
@@ -253,9 +225,9 @@
         background: rgba(241, 245, 249, 0.4);
     }
 
-    /* Profile Dropdown Standard - Right Aligned */
     .profile-dropdown-container {
         position: relative;
+        z-index: 60;
     }
     
     .glass-dropdown {
@@ -266,13 +238,14 @@
         background: rgba(255, 255, 255, 0.98);
         border: 1px solid rgba(226, 232, 240, 0.8);
         border-radius: 16px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        z-index: 100;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+        z-index: 200;
         transform: scale(0.95) translateY(-10px);
         opacity: 0;
         visibility: hidden;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
     }
     
     .glass-dropdown.active {
@@ -281,7 +254,10 @@
         visibility: visible;
     }
     
-    /* Hamburger Animation */
+    @media (max-width: 640px) {
+        .glass-dropdown { right: -10px; width: 260px; }
+    }
+    
     .hamburger-btn {
         display: flex;
         flex-direction: column;
@@ -298,9 +274,7 @@
         justify-content: center;
     }
     
-    .hamburger-btn:hover {
-        background: rgba(255, 255, 255, 0.9);
-    }
+    .hamburger-btn:hover { background: rgba(255, 255, 255, 0.9); }
     
     .hamburger-bar {
         width: 18px;
@@ -311,18 +285,9 @@
         transform-origin: center;
     }
     
-    .hamburger-btn.active .hamburger-bar:nth-child(1) {
-        transform: translateY(7px) rotate(45deg);
-    }
-    
-    .hamburger-btn.active .hamburger-bar:nth-child(2) {
-        opacity: 0;
-        transform: scaleX(0);
-    }
-    
-    .hamburger-btn.active .hamburger-bar:nth-child(3) {
-        transform: translateY(-7px) rotate(-45deg);
-    }
+    .hamburger-btn.active .hamburger-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.active .hamburger-bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger-btn.active .hamburger-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
     .dropdown-item {
         display: flex;
@@ -350,9 +315,7 @@
         border-radius: 0 0 8px 8px !important;
     }
     
-    .logout-item:hover {
-        background: rgba(239, 68, 68, 0.05) !important;
-    }
+    .logout-item:hover { background: rgba(239, 68, 68, 0.05) !important; }
 
     .profile-trigger {
         display: flex;
@@ -407,42 +370,32 @@
         box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
     }
 
-    /* Responsive */
     @media (max-width: 640px) {
-        .action-btns {
-            justify-content: stretch;
-        }
-        
-        .btn-action {
-            flex: 1;
-            justify-content: center;
-        }
-        
-        .data-table th,
-        .data-table td {
-            padding: 14px 16px;
-        }
+        .action-btns { justify-content: stretch; }
+        .btn-action { flex: 1; justify-content: center; }
+        .data-table th, .data-table td { padding: 14px 16px; }
     }
 </style>
-
 ```
-### แก้ใน homerent.css เพิ่มใน style
-```css
-/* Shimmer effect for empty state */
-@keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-}
-
-.empty-state {
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.4) 0%,
-        rgba(255, 255, 255, 0.6) 50%,
-        rgba(255, 255, 255, 0.4) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 3s infinite;
-}
+### แก้ homerent.html navbar
+```html
+<nav class="navbar glass-panel-white px-4 py-2.5 flex items-center justify-between relative z-50">
+```
+### แก้ homerent.html แก้ข้อความปุ่ม
+```html
+<div class="action-btns">
+    <button class="btn-action btn-black">
+        <i class="fa-solid fa-plus" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+        สร้างเว็บไซต์
+    </button>
+    <button class="btn-action btn-white">
+        <i class="fa-solid fa-filter" style="color: #38bdf8;"></i>
+        ฟิลเตอร์
+    </button>
+    <button class="btn-action btn-white">
+        <i class="fa-solid fa-eye" style="color: #818cf8;"></i>
+        แสดงคอลัมน์
+    </button>
+</div>
 
 ```
