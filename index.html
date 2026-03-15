@@ -13,6 +13,45 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/stats-card.css">
+    <style>
+        .hero-section {
+            padding: 80px 20px;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+        }
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: #6366f1;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .hero-description {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+        .hero-btns {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+        }
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.25rem; }
+            .hero-subtitle { font-size: 1.25rem; }
+        }
+    </style>
 </head>
 <body>
     <div id="toastContainer"></div>
@@ -119,7 +158,7 @@
                 ตั้งค่า
             </a>
             
-            <!-- Admin Panel Button (Sidebar) - ซ่อนไว้ก่อน รอ JS เช็ค Role -->
+            <!-- Admin Panel Button (Sidebar) -->
             <a id="sidebarAdminBtn" href="./admin.html" class="sidebar-item" style="display:none;">
                 <span class="sidebar-item-icon" style="background:rgba(124,58,237,0.1);color:#7c3aed;">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -203,7 +242,7 @@
                             <span>ตั้งค่า</span>
                         </div>
                         
-                        <!-- Admin Panel Button (Dropdown) - ซ่อนไว้ก่อน -->
+                        <!-- Admin Panel Button (Dropdown) -->
                         <div id="adminPanelBtn" class="dropdown-item admin-item" onclick="window.location.href='./admin.html'" style="display:none;">
                             <svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                             <span>Admin Panel</span>
@@ -219,79 +258,20 @@
         </div>
     </nav>
 
-    <!-- Stats Section -->
-    <div class="stats-container w-full max-w-6xl mx-auto px-4 py-6">
-        <div class="stats-header">
-            <div>
-                <h2>จำนวนเว็บไซต์ที่ให้บริการ</h2>
-                <p id="serviceAge">กำลังโหลด...</p>
-            </div>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-card today">
-                <div class="stat-card-header">
-                    <div class="stat-card-icon"><i class="fa-solid fa-calendar-day"></i></div>
-                    <div class="stat-card-badge">วันนี้</div>
-                </div>
-                <div class="stat-card-value" id="statToday">—</div>
-                <div class="stat-card-label">เว็บไซต์ที่เช่า</div>
-                <div class="stat-card-change" id="statTodayChange" style="display:none;">
-                    <i class="fa-solid fa-arrow-up"></i>
-                    <span id="statTodayChangeText">+0</span>
-                </div>
-            </div>
-            <div class="stat-card week">
-                <div class="stat-card-header">
-                    <div class="stat-card-icon"><i class="fa-solid fa-chart-column"></i></div>
-                    <div class="stat-card-badge">สัปดาห์นี้</div>
-                </div>
-                <div class="stat-card-value" id="statWeek">—</div>
-                <div class="stat-card-label">เว็บไซต์ที่เช่า</div>
-                <div class="stat-card-change" id="statWeekChange" style="display:none;">
-                    <i class="fa-solid fa-arrow-up"></i>
-                    <span id="statWeekChangeText">+0</span>
-                </div>
-            </div>
-            <div class="stat-card month">
-                <div class="stat-card-header">
-                    <div class="stat-card-icon"><i class="fa-solid fa-chart-line"></i></div>
-                    <div class="stat-card-badge">เดือนนี้</div>
-                </div>
-                <div class="stat-card-value" id="statMonth">—</div>
-                <div class="stat-card-label">เว็บไซต์ที่เช่า</div>
-                <div class="stat-card-change" id="statMonthChange" style="display:none;">
-                    <i class="fa-solid fa-arrow-up"></i>
-                    <span id="statMonthChangeText">+0</span>
-                </div>
-            </div>
-            <div class="stat-card total">
-                <div class="stat-card-header">
-                    <div class="stat-card-icon"><i class="fa-solid fa-globe"></i></div>
-                    <div class="stat-card-badge trending">ทั้งหมด</div>
-                </div>
-                <div class="stat-card-value" id="statTotal">—</div>
-                <div class="stat-card-label">เว็บไซต์ที่เช่า</div>
-                <div class="stat-card-change" id="statTotalChange" style="display:none;">
-                    <i class="fa-solid fa-arrow-up"></i>
-                    <span id="statTotalChangeText">+0</span>
-                </div>
-            </div>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1 class="hero-title">Best Website E-commerce</h1>
+        <p class="hero-subtitle">Panderx Studio</p>
+        <p class="hero-description">เริ่มต้นได้แล้ววันนี้ เช่าครั้งแรกราคาเพียง 99 บาททุกราคา!!</p>
+        <div class="hero-btns">
+            <button onclick="window.location.href='./homerent.html'" class="btn-liquid px-8 py-3 text-lg font-bold">
+                เช่าเลย
+            </button>
+            <button id="heroLoginBtn" onclick="window.location.href='./login.html'" class="btn-liquid-white px-8 py-3 text-lg font-bold" style="display:none;">
+                เข้าสู่ระบบ
+            </button>
         </div>
     </div>
-
-    <!-- Products -->
-    <main class="w-full max-w-6xl mx-auto px-4 py-6 pb-20">
-        <div class="flex justify-between items-end mb-4">
-            <div>
-                <h2 class="text-xl md:text-2xl font-bold text-slate-800 mb-1">สินค้าแนะนำ</h2>
-                <p class="text-slate-500 text-sm">เลือกแบบที่ตรงกับความต้องการ</p>
-            </div>
-        </div>
-
-        <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-            <!-- Products loaded by JS -->
-        </div>
-    </main>
 
     <footer class="w-full max-w-6xl mx-auto px-4 py-6 text-center text-slate-400 text-sm">
         <p>&copy; 2026 PanderX. All rights reserved.</p>
@@ -300,11 +280,24 @@
     <script src="js/frontend/theme-toggle.js"></script>
     <script src="js/frontend/stats-logic.js"></script>
     <script type="module" src="js/frontend/theme-sync.js"></script>
-    <script src="js/frontend/theme-toggle.js"></script>
-    <script src="js/frontend/stats-logic.js"></script>
     <script type="module" src="js/frontend/announcement-bar.js"></script>
-    <script src="js/frontend/theme-toggle.js"></script>
-    <script src="js/frontend/stats-logic.js"></script>
     <script type="module" src="js/frontend/index.js"></script>
+    <script>
+        // Check auth for hero login button
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkAuth = setInterval(() => {
+                if (window.auth) {
+                    clearInterval(checkAuth);
+                    window.auth.onAuthStateChanged(user => {
+                        const heroLoginBtn = document.getElementById('heroLoginBtn');
+                        if (heroLoginBtn) {
+                            heroLoginBtn.style.display = user ? 'none' : 'block';
+                        }
+                    });
+                }
+            }, 100);
+            setTimeout(() => clearInterval(checkAuth), 5000);
+        });
+    </script>
 </body>
 </html>
