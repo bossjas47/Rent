@@ -45,14 +45,16 @@ window.handleLogout = async function() {
 
 window.toggleSidebar = function(e) {
     if (e) e.stopPropagation();
-    document.getElementById('sidebarDrawer')?.classList.toggle('active');
-    document.getElementById('sidebarOverlay')?.classList.toggle('active');
+    // common.css ใช้ class .open สำหรับ sidebar
+    document.getElementById('sidebarDrawer')?.classList.toggle('open');
+    document.getElementById('sidebarOverlay')?.classList.toggle('open');
+    // hamburger ใช้ class .active เพื่อ animation
     document.getElementById('hamburgerBtn')?.classList.toggle('active');
 };
 
 window.closeSidebar = function() {
-    document.getElementById('sidebarDrawer')?.classList.remove('active');
-    document.getElementById('sidebarOverlay')?.classList.remove('active');
+    document.getElementById('sidebarDrawer')?.classList.remove('open');
+    document.getElementById('sidebarOverlay')?.classList.remove('open');
     document.getElementById('hamburgerBtn')?.classList.remove('active');
 };
 

@@ -109,7 +109,7 @@ body {
     text-decoration: none;
 }
 
-/* Hamburger */
+/* Hamburger — with full animation */
 .hamburger-btn {
     width: 40px;
     height: 40px;
@@ -125,6 +125,8 @@ body {
     border-radius: 8px;
     transition: background 0.2s;
     -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 61;
 }
 
 .hamburger-btn:hover {
@@ -136,12 +138,22 @@ body {
     height: 2.5px;
     background: linear-gradient(90deg, #38bdf8, #818cf8);
     border-radius: 3px;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+    display: block;
 }
 
-.hamburger-btn.active .hamburger-bar:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
-.hamburger-btn.active .hamburger-bar:nth-child(2) { opacity: 0; width: 0; }
-.hamburger-btn.active .hamburger-bar:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+/* X animation when sidebar is open */
+.hamburger-btn.active .hamburger-bar:nth-child(1) {
+    transform: translateY(7.5px) rotate(45deg);
+}
+.hamburger-btn.active .hamburger-bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+.hamburger-btn.active .hamburger-bar:nth-child(3) {
+    transform: translateY(-7.5px) rotate(-45deg);
+}
 
 /* ============================================
    Buttons
@@ -233,23 +245,24 @@ body {
 .glass-dropdown {
     position: absolute;
     top: calc(100% + 10px);
-    right: 0;
+    right: 0;           /* RIGHT-ALIGNED: ขวาเสมอ */
+    left: auto;         /* ยกเลิก left alignment */
     width: 280px;
     background: rgba(255, 255, 255, 0.98);
     border: 1px solid rgba(226, 232, 240, 0.8);
     border-radius: 16px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    z-index: 100;
+    z-index: 200;
     transform-origin: top right;
-    transform: scale(0.95);
+    transform: scale(0.95) translateY(-8px);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-dropdown.active {
-    transform: scale(1);
+    transform: scale(1) translateY(0);
     opacity: 1;
     visibility: visible;
     pointer-events: all;
