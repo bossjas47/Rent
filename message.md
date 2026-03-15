@@ -1,70 +1,357 @@
-# 📋 Message Log - PanderX Multi-Tenant System
+### แก้ใน index.html
 
-## วันที่: 2026-03-13
-## ผู้แก้ไข: AI Assistant
-## ไฟล์ที่แก้ไข: topup.html, topup.js
+```html
+<body class="bg-slate-50 font-[Prompt] text-slate-800">
+    <div id="toastContainer"></div>
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="window.closeSidebar()"></div>
+    
+    <!-- Sidebar (เหมือนเดิม) -->
+    <aside id="sidebarDrawer" class="sidebar-drawer">
+        <!-- ... Sidebar content เหมือนเดิม ... -->
+        <div class="sidebar-header">
+            <a href="./index.html" class="sidebar-logo">
+                <div class="sidebar-logo-icon">P</div>
+                <span class="sidebar-logo-text">PanderX</span>
+            </a>
+            <button class="sidebar-close-btn" onclick="window.closeSidebar()" aria-label="ปิดเมนู">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div id="sidebarUserStrip" class="sidebar-user-strip" style="display:none;">
+            <div id="sidebarAvatar" class="sidebar-avatar">U</div>
+            <div class="sidebar-user-info">
+                <div id="sidebarUsername" class="sidebar-username">กำลังโหลด...</div>
+                <div class="sidebar-balance">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 9l10 13 10-13-10-7z"/></svg>
+                    <span id="sidebarBalance">0.00</span> บาท
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <p class="sidebar-section-label">เมนูหลัก</p>
+            <a href="./index.html" class="sidebar-item active">
+                <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></span>
+                หน้าหลัก
+            </a>
+            <a href="./homerent.html" class="sidebar-item">
+                <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg></span>
+                เช่าเว็บไซต์
+            </a>
+            <a href="./upgrade.html" class="sidebar-item">
+                <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></span>
+                อัปเกรด
+                <span class="sidebar-badge">NEW</span>
+            </a>
+        </nav>
+        <div class="sidebar-divider"></div>
+        <div id="sidebarAuthGuest" style="display:none;">
+            <p class="sidebar-section-label">บัญชีผู้ใช้</p>
+            <button onclick="window.goToLogin(); window.closeSidebar();" class="sidebar-auth-btn sidebar-login-btn">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                เข้าสู่ระบบ
+            </button>
+            <button onclick="window.goToRegister(); window.closeSidebar();" class="sidebar-auth-btn sidebar-register-btn">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                สมัครสมาชิก
+            </button>
+        </div>
+        <div id="sidebarAuthUser" style="display:none;">
+            <p class="sidebar-section-label">บัญชีของฉัน</p>
+            <a href="./profile.html" class="sidebar-item"><span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>โปรไฟล์</a>
+            <a href="./orders.html" class="sidebar-item"><span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg></span>ประวัติการสั่งซื้อ</a>
+            <a href="./topup.html" class="sidebar-item"><span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></span>เติมเงิน</a>
+            <a href="./settings.html" class="sidebar-item"><span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></span>ตั้งค่า</a>
+            <a id="sidebarAdminBtn" href="./admin.html" class="sidebar-item" style="display:none;"><span class="sidebar-item-icon" style="background:rgba(124,58,237,0.1);color:#7c3aed;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></span>Admin Panel</a>
+            <button onclick="window.handleLogout()" class="sidebar-item sidebar-logout"><span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg></span>ออกจากระบบ</button>
+        </div>
+        <div class="sidebar-version">PanderX v2.0 © 2026</div>
+    </aside>
 
----
+    <!-- Navbar (เหมือนเดิม) -->
+    <nav class="fixed top-3 left-3 right-3 z-50 navbar-liquid-glass rounded-2xl px-4 py-2.5 flex items-center justify-between">
+        <button id="hamburgerBtn" class="hamburger-btn" onclick="window.toggleSidebar(event)" aria-expanded="false" aria-label="เปิดเมนู">
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+        </button>
+        <a href="./index.html" class="navbar-brand text-xl md:text-2xl">PanderX</a>
+        <div class="flex items-center gap-2">
+            <a href="./login.html" id="loginBtn" class="btn-liquid px-3 py-1.5 text-sm font-medium hidden" style="display:none;">เข้าสู่ระบบ</a>
+            <div id="userProfile" class="profile-dropdown-container hidden" style="display:none;">
+                <button class="profile-trigger" id="profileTrigger" onclick="window.toggleProfileDropdown(event)">
+                    <div class="balance-pill hidden sm:flex">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 9l10 13 10-13-10-7z"/></svg>
+                        <span id="userBalance">0.00</span>
+                    </div>
+                    <div class="avatar-glass" id="userAvatar">U</div>
+                    <svg class="w-3 h-3 text-slate-400 transition-transform duration-200" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="glass-dropdown" id="profileDropdown">
+                    <div class="p-3 border-b border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <div class="avatar-glass w-10 h-10 text-base" id="dropdownAvatar">U</div>
+                            <div class="min-w-0 flex-1">
+                                <div class="font-bold text-slate-800 truncate text-sm" id="dropdownName">ผู้ใช้</div>
+                                <div class="text-xs text-slate-500 flex items-center gap-1 mt-0.5"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span><span>ออนไลน์</span></div>
+                            </div>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center">
+                            <span class="text-xs text-slate-500">ยอดคงเหลือ</span>
+                            <span class="balance-pill" id="dropdownBalance">0.00 ฿</span>
+                        </div>
+                    </div>
+                    <div class="py-1">
+                        <div class="dropdown-item" onclick="window.handleMenuClick('profile')"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>โปรไฟล์ของฉัน</span></div>
+                        <div class="dropdown-item" onclick="window.handleMenuClick('orders')"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg><span>ประวัติการสั่งซื้อ</span></div>
+                        <div class="dropdown-item" onclick="window.handleMenuClick('topup')"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg><span>เติมเงิน</span></div>
+                        <div class="dropdown-item" onclick="window.handleMenuClick('settings')"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span>ตั้งค่า</span></div>
+                        <div id="adminPanelBtn" class="dropdown-item admin-item" onclick="window.location.href='./admin.html'" style="display:none;"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span>Admin Panel</span></div>
+                        <div class="dropdown-item logout-item" onclick="window.handleLogout()"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg><span>ออกจากระบบ</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-### ✅ สิ่งที่ทำแล้ว (Completed Tasks)
+    <!-- ========================================== -->
+    <!-- STATS SECTION (ย้ายขึ้นมาบนสุด) -->
+    <!-- ========================================== -->
+    <div class="w-full max-w-6xl mx-auto px-4 pt-24 pb-6">
+        <div class="stats-header-v2 mb-4">
+            <div class="flex items-center gap-3 justify-center md:justify-start">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-sky-500/30">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">สถิติการใช้งาน</h2>
+                    <p id="serviceAge" class="text-xs text-slate-500">กำลังโหลด...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-grid-v2">
+            <div class="stat-card-v2 stat-today">
+                <div class="stat-icon-bg"><i class="fa-solid fa-sun"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">วันนี้</span>
+                    <span class="stat-value" id="statToday">0</span>
+                </div>
+                <div class="stat-trend up"><i class="fa-solid fa-arrow-trend-up"></i></div>
+            </div>
 
-#### 1. HTML Structure (topup.html)
-- [x] แปลงเป็น Self-Contained Page ตาม SKILL.md (ใช้ Tailwind CDN + inline style)
-- [x] ลบการ reference css/topup.css (ตามกฎหมายของ SKILL.md)
-- [x] แก้ไข Dropdown ใช้ class "active" แทน "show" (ตาม SKILL.md ห้ามใช้ show)
-- [x] แก้ไขการซ่อน/แสดง element ใช้ `style.display` แทน `classList.hidden` ทั้งหมด
-- [x] แก้ไข skeleton loading เป็น spinner แทน (ตามกฎ "ห้ามใช้ skeleton ที่ทำให้ข้อมูลหาย")
-- [x] เพิ่ม animation spinner ด้วย CSS keyframes
-- [x] คง path `js/frontend/topup.js` ไว้ตามเดิม (ไม่เปลี่ยนการนำทาง)
+            <div class="stat-card-v2 stat-week">
+                <div class="stat-icon-bg"><i class="fa-solid fa-calendar-week"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">สัปดาห์นี้</span>
+                    <span class="stat-value" id="statWeek">0</span>
+                </div>
+                <div class="stat-trend"><i class="fa-solid fa-minus"></i></div>
+            </div>
 
-#### 2. JavaScript Security & Best Practices (topup.js)
-- [x] เพิ่ม `import { writeBatch }` ที่หายไปจาก redeemCode function
-- [x] สร้างฟังก์ชัน `escapeHtml()` สำหรับป้องกัน XSS (ใช้ทุกจุดที่ insert DOM)
-- [x] แก้ไข `balance || 0` เป็น `balance ?? 0` ทุกจุด (Nullish Coalescing)
-- [x] แก้ไข `classList.remove('hidden')/add('hidden')` เป็น `style.display` ทั้งหมด
-- [x] เพิ่ม `try/catch` ครบทุก async function (loadPaymentMethods, loadHistory, redeemCode, etc.)
-- [x] ใช้ escapeHtml กับทุก dynamic content ที่มาจาก database (user input, codes, etc.)
-- [x] แก้ไข `firebase-config.js` import path ให้ถูกต้อง (`./firebase-config.js`)
+            <div class="stat-card-v2 stat-month">
+                <div class="stat-icon-bg"><i class="fa-solid fa-calendar-days"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">เดือนนี้</span>
+                    <span class="stat-value" id="statMonth">0</span>
+                </div>
+                <div class="stat-trend"><i class="fa-solid fa-minus"></i></div>
+            </div>
 
-#### 3. UI/UX Improvements
-- [x] แก้ไข empty state ให้แสดงชัดเจนเมื่อไม่มีข้อมูล
-- [x] เพิ่ม error handling ที่แสดง UI กลับมาเสมอ (ไม่ปล่อยให้หน้าจอค้าง)
-- [x] แก้ไข toast notification ให้ใช้ escapeHtml กับ message
+            <div class="stat-card-v2 stat-total">
+                <div class="stat-icon-bg"><i class="fa-solid fa-trophy"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">ทั้งหมด</span>
+                    <span class="stat-value" id="statTotal">0</span>
+                </div>
+                <div class="stat-trend up"><i class="fa-solid fa-crown"></i></div>
+            </div>
+        </div>
+    </div>
 
----
+    <!-- ========================================== -->
+    <!-- HERO SECTION (จัดกึ่งกลาง + ไม่ชนขอบ) -->
+    <!-- ========================================== -->
+    <div class="w-full max-w-4xl mx-auto px-4 py-8 text-center">
+        <h1 class="text-3xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent leading-tight">
+            Best Website E-commerce
+        </h1>
+        <p class="text-lg md:text-2xl font-semibold text-indigo-500 mb-4">Panderx Studio</p>
+        <p class="text-sm md:text-base text-slate-600 max-w-lg mx-auto mb-8 leading-relaxed px-4">
+            เริ่มต้นได้แล้ววันนี้ เช่าครั้งแรกราคาเพียง 99 บาททุกราคา!!
+        </p>
+        
+        <!-- ปุ่มจัดกึ่งกลาง + มี gap -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 px-4">
+            <button onclick="window.location.href='./homerent.html'" class="btn-liquid-glass w-full sm:w-auto px-8 py-3 text-base font-bold text-white rounded-full shadow-lg shadow-sky-500/30">
+                <i class="fa-solid fa-rocket mr-2"></i>เช่าเลย
+            </button>
+            <button id="heroLoginBtn" onclick="window.location.href='./login.html'" class="btn-liquid-white w-full sm:w-auto px-8 py-3 text-base font-bold rounded-full hidden" style="display:none;">
+                <i class="fa-solid fa-right-to-bracket mr-2"></i>เข้าสู่ระบบ
+            </button>
+        </div>
+    </div>
 
-### 🔄 คำสั่งให้ AI ครั้งถัดไป (Instructions for Next AI)
+    <!-- ========================================== -->
+    <!-- ลบสินค้าแนะนำออก -->
+    <!-- ========================================== -->
 
-เมื่อต้องการแก้ไขหน้า topup หรือหน้าอื่นๆ ในอนาคต กรุณาทำตามนี้:
+    <footer class="w-full max-w-6xl mx-auto px-4 py-8 text-center text-slate-400 text-sm mt-8 border-t border-slate-200">
+        <p>&copy; 2026 PanderX. All rights reserved.</p>
+    </footer>
 
-1. **ตรวจสอบ SKILL.md ก่อนเสมอ** - อ่านกฎเหล็กทุกข้อก่อนแก้ไข
-2. **Self-Contained Pages** - หน้า topup.html, login.html, rent-website.html ต้องใช้ Tailwind CDN + inline style ห้าม link ไปยัง css/common.css หรือ css/topup.css
-3. **ใช้ style.display ไม่ใช่ classList.hidden** - ทุกการควบคุมการแสดงผลต้องใช้ `el.style.display = 'none'/'block'/'flex'` ห้ามใช้ `el.classList.add('hidden')`
-4. **Nullish Coalescing (??)** - ตรวจสอบ balance ต้องใช้ `data.balance ?? 0` ไม่ใช่ `|| 0`
-5. **Dropdown Class** - ใช้ class "active" สำหรับเปิด dropdown ไม่ใช่ "show"
-6. **Escape HTML** - ทุก string ที่มาจาก user/database ต้องผ่าน `escapeHtml()` ก่อน insert DOM
-7. **Try/Catch ทุก Async** - ทุกฟังก์ชัน async ต้องมี try/catch และแสดง fallback UI เมื่อ error
-8. **No Skeleton Loading** - ห้ามใช้ skeleton ที่ทำให้ข้อมูลหาย ให้ใช้ spinner แทน
-9. **Firebase Imports** - ตรวจสอบว่า import ครบทุกตัวที่ใช้ (เช่น writeBatch) และใช้ version 10.7.1
-10. **Path Preservation** - ห้ามเปลี่ยน path ของไฟล์ JS (คง `js/frontend/topup.js` ไว้)
+    <!-- Scripts -->
+    <script src="js/frontend/theme-toggle.js"></script>
+    <script src="js/frontend/stats-logic.js"></script>
+    <script type="module" src="js/frontend/theme-sync.js"></script>
+    <script type="module" src="js/frontend/announcement-bar.js"></script>
+    <script type="module" src="js/frontend/index.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkAuth = setInterval(() => {
+                if (window.auth) {
+                    clearInterval(checkAuth);
+                    window.auth.onAuthStateChanged(user => {
+                        const heroLoginBtn = document.getElementById('heroLoginBtn');
+                        if (heroLoginBtn) {
+                            heroLoginBtn.style.display = user ? 'none' : 'inline-block';
+                        }
+                    });
+                }
+            }, 100);
+            setTimeout(() => clearInterval(checkAuth), 5000);
+        });
+    </script>
+</body>
+```
 
----
+### แก้ใน index.css
+```css
+/* จัดกึ่งกลาง Stats บนมือถือ */
+@media (max-width: 768px) {
+    .stats-header-v2 > div {
+        justify-content: center !important;
+    }
+}
 
-### 📝 หมายเหตุสำคัญ
+/* ปรับ Hero Section ให้ไม่ชนขอบ และจัดกึ่งกลางสมบูรณ์แบบ */
+.text-center {
+    text-align: center;
+}
 
-- **topup.html**: ตอนนี้เป็น self-contained สมบูรณ์แล้ว มี CSS ทั้งหมดใน inline style
-- **topup.js**: แก้ไขปัญหา writeBatch ไม่ได้ import และเพิ่ม security ครบถ้วน
-- **message.md**: ไฟล์นี้ต้อง update ทุกครั้งที่มีการแก้ไขระบบ (ให้ AI ถัดไปเติม log ต่อท้าย)
+/* ปุ่มเต็มความกว้างบนมือถือ แต่กึ่งกลาง */
+@media (max-width: 640px) {
+    .btn-liquid-glass,
+    .btn-liquid-white {
+        width: 100%;
+        max-width: 280px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
 
----
+/* Stats Grid V2 (เหมือนเดิมแต่เพิ่มความสวยงาม) */
+.stats-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
 
-### 🆘 ปัญหาที่อาจพบในอนาคต
+@media (min-width: 768px) {
+    .stats-grid-v2 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
 
-1. **Firestore Index**: ถ้า query redeem_codes ไม่ได้ ต้องสร้าง index ที่ Firestore Console (field: code ASC, isUsed ASC)
-2. **CORS Storage**: ถ้าอัพโหลดรูปไม่ได้ ต้องตั้งค่า CORS ใน Firebase Storage
-3. **Module Type**: ต้องใช้ `<script type="module">` เสมอสำหรับไฟล์ที่มี import/export
+.stat-card-v2 {
+    background: white;
+    border-radius: 16px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+}
 
----
+.stat-card-v2:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
 
-**สถานะปัจจุบัน**: ✅ พร้อมใช้งาน (Production Ready)
-**ตรวจสอบล่าสุด**: 2026-03-13
+.stat-card-v2::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--stat-color) 0%, transparent 100%);
+}
+
+.stat-today { --stat-color: #38bdf8; }
+.stat-week { --stat-color: #818cf8; }
+.stat-month { --stat-color: #34d399; }
+.stat-total { --stat-color: #fbbf24; }
+
+.stat-icon-bg {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.stat-today .stat-icon-bg { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #0284c7; }
+.stat-week .stat-icon-bg { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color: #4f46e5; }
+.stat-month .stat-icon-bg { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #059669; }
+.stat-total .stat-icon-bg { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
+
+.stat-content { flex: 1; min-width: 0; text-align: left; }
+.stat-label { display: block; font-size: 0.75rem; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+.stat-value { display: block; font-size: 1.4rem; font-weight: 700; color: #1e293b; line-height: 1.2; }
+
+.stat-trend {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    background: #f1f5f9;
+}
+
+.stat-trend.up { color: #10b981; background: #d1fae5; }
+
+@media (max-width: 640px) {
+    .stat-card-v2 { padding: 1rem; }
+    .stat-icon-bg { width: 38px; height: 38px; font-size: 1rem; }
+    .stat-value { font-size: 1.2rem; }
+}
+
+```
+### แก้ใน index.js
+```javascript
+document.addEventListener('DOMContentLoaded', () => {
+    initAuth();
+    
+    // ลบ loadProducts ออก เพราะลบส่วนแสดงผลออกไปแล้ว
+    setTimeout(() => {
+        loadStats();
+        // loadProducts(); // ลบออก
+    }, 100);
+    
+    // ... ที่เหลือเหมือนเดิม
+});
+
+```
