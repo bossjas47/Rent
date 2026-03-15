@@ -1,401 +1,74 @@
-### แก้ใน homerent.html (CSS Style) — แทนที่ <style> ทั้งหมด
+### แก้ใน homerent.html ค้นหา  <div id="sidebarAuthUser" class="sidebar-auth-section" style="display:none;">  และเพิ่มเมนูก่อนปุ่ม "ออกจากระบบ":
 
-```css
-<style>
-    :root {
-        --glass-bg: rgba(255, 255, 255, 0.85);
-        --glass-border: rgba(255, 255, 255, 0.9);
-        --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
-    }
-    
-    html, body {
-        overflow-x: hidden;
-        width: 100%;
-        max-width: 100%;
-    }
-    
-    body {
-        background: linear-gradient(135deg, #e0f2fe 0%, #f3e8ff 50%, #f8fafc 100%);
-        background-attachment: fixed;
-        min-height: 100vh;
-    }
-
-    .dashboard-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 24px 16px;
-    }
-    
-    .breadcrumb {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.875rem;
-        color: #64748b;
-        margin-bottom: 24px;
-        padding: 12px 16px;
-        background: rgba(255, 255, 255, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        width: fit-content;
-    }
-    
-    .breadcrumb a { 
-        color: #0ea5e9; 
-        font-weight: 500;
-        transition: all 0.2s;
-    }
-    .breadcrumb a:hover { color: #0284c7; }
-    .breadcrumb span { color: #94a3b8; }
-
-    .search-bar-container {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-radius: 16px;
-        padding: 14px 20px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.9);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        margin-bottom: 20px;
-        transition: all 0.3s ease;
-    }
-    
-    .search-bar-container:focus-within {
-        box-shadow: 0 8px 30px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        border-color: rgba(56, 189, 248, 0.3);
-        transform: translateY(-1px);
-    }
-    
-    .search-input {
-        flex: 1;
-        border: none;
-        outline: none;
-        font-size: 1rem;
-        color: #1e293b;
-        background: transparent;
-        font-family: 'Prompt', sans-serif;
-    }
-    .search-input::placeholder { color: #94a3b8; }
-
-    .action-btns {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-    }
-    
-    .btn-action {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 12px 24px;
-        border-radius: 100px;
-        font-weight: 600;
-        font-size: 0.9375rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: none;
-        cursor: pointer;
-        font-family: 'Prompt', sans-serif;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    .btn-action:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-    
-    .btn-action:active { transform: translateY(0); }
-
-    .btn-black {
-        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
-        color: white;
-        box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
-    }
-    
-    .btn-black:hover { box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4); }
-    
-    .btn-white {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(10px);
-        color: #475569;
-        border: 1px solid rgba(255, 255, 255, 0.9);
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-    
-    .btn-white:hover {
-        background: rgba(255, 255, 255, 0.9);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    }
-    
-    .data-table-container {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.9);
-        overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-    }
-    
-    .data-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        text-align: left;
-    }
-    
-    .data-table th {
-        padding: 18px 20px;
-        background: rgba(241, 245, 249, 0.6);
-        color: #64748b;
-        font-weight: 600;
-        font-size: 0.875rem;
-        border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-        backdrop-filter: blur(10px);
-    }
-    
-    .data-table td {
-        padding: 18px 20px;
-        border-bottom: 1px solid rgba(226, 232, 240, 0.4);
-        color: #334155;
-        font-size: 0.9375rem;
-        transition: background 0.2s;
-    }
-    
-    .data-table tr:hover td { background: rgba(56, 189, 248, 0.03); }
-    .data-table tr:last-child td { border-bottom: none; }
-    
-    .empty-state {
-        padding: 80px 20px;
-        text-align: center;
-        color: #94a3b8;
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.4) 100%);
-        background-size: 200% 100%;
-        animation: shimmer 3s infinite;
-        border-radius: 16px;
-        margin: 20px;
-        border: 2px dashed rgba(148, 163, 184, 0.3);
-        backdrop-filter: blur(10px);
-    }
-    
-    @keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
-    }
-    
-    .pagination {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 18px 20px;
-        background: rgba(241, 245, 249, 0.5);
-        border-top: 1px solid rgba(226, 232, 240, 0.6);
-        color: #64748b;
-        font-size: 0.875rem;
-        backdrop-filter: blur(10px);
-    }
-    
-    .btn-page {
-        padding: 8px 18px;
-        border-radius: 12px;
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        background: rgba(255, 255, 255, 0.7);
-        font-weight: 500;
-        transition: all 0.2s;
-        cursor: pointer;
-        color: #475569;
-        backdrop-filter: blur(10px);
-    }
-    
-    .btn-page:hover:not(:disabled) {
-        background: rgba(255, 255, 255, 0.95);
-        border-color: rgba(56, 189, 248, 0.4);
-        color: #0ea5e9;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-    
-    .btn-page:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-        background: rgba(241, 245, 249, 0.4);
-    }
-
-    .profile-dropdown-container {
-        position: relative;
-        z-index: 60;
-    }
-    
-    .glass-dropdown {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        width: 280px;
-        background: rgba(255, 255, 255, 0.98);
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        border-radius: 16px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-        z-index: 200;
-        transform: scale(0.95) translateY(-10px);
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-    }
-    
-    .glass-dropdown.active {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-        visibility: visible;
-    }
-    
-    @media (max-width: 640px) {
-        .glass-dropdown { right: -10px; width: 260px; }
-    }
-    
-    .hamburger-btn {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        cursor: pointer;
-        padding: 8px;
-        transition: all 0.3s ease;
-        border-radius: 10px;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .hamburger-btn:hover { background: rgba(255, 255, 255, 0.9); }
-    
-    .hamburger-bar {
-        width: 18px;
-        height: 2px;
-        background: linear-gradient(90deg, #38bdf8, #818cf8);
-        border-radius: 2px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        transform-origin: center;
-    }
-    
-    .hamburger-btn.active .hamburger-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .hamburger-btn.active .hamburger-bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
-    .hamburger-btn.active .hamburger-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-    .dropdown-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 16px;
-        margin: 2px 8px;
-        color: #475569;
-        font-size: 0.9rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.15s;
-        border-radius: 8px;
-    }
-    
-    .dropdown-item:hover {
-        background: rgba(56, 189, 248, 0.08);
-        color: #0ea5e9;
-    }
-    
-    .logout-item {
-        color: #ef4444 !important;
-        border-top: 1px solid rgba(226, 232, 240, 0.6);
-        margin-top: 4px !important;
-        border-radius: 0 0 8px 8px !important;
-    }
-    
-    .logout-item:hover { background: rgba(239, 68, 68, 0.05) !important; }
-
-    .profile-trigger {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 12px;
-        background: rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(226, 232, 240, 0.6);
-        border-radius: 100px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        position: relative;
-        backdrop-filter: blur(10px);
-    }
-    
-    .profile-trigger:hover {
-        background: rgba(255, 255, 255, 0.9);
-        border-color: rgba(56, 189, 248, 0.3);
-        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.1);
-    }
-    
-    .profile-trigger.active {
-        background: rgba(255, 255, 255, 0.95);
-        border-color: rgba(56, 189, 248, 0.5);
-    }
-
-    .balance-pill {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 10px;
-        background: rgba(56, 189, 248, 0.1);
-        color: #0ea5e9;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        border: 1px solid rgba(56, 189, 248, 0.2);
-    }
-    
-    .avatar-glass {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
-        color: white;
-        border-radius: 50%;
-        font-weight: 700;
-        font-size: 0.875rem;
-        border: 2px solid white;
-        box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
-    }
-
-    @media (max-width: 640px) {
-        .action-btns { justify-content: stretch; }
-        .btn-action { flex: 1; justify-content: center; }
-        .data-table th, .data-table td { padding: 14px 16px; }
-    }
-</style>
-```
-### แก้ homerent.html navbar
 ```html
-<nav class="navbar glass-panel-white px-4 py-2.5 flex items-center justify-between relative z-50">
-```
-### แก้ homerent.html แก้ข้อความปุ่ม
-```html
-<div class="action-btns">
-    <button class="btn-action btn-black">
-        <i class="fa-solid fa-plus" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
-        สร้างเว็บไซต์
-    </button>
-    <button class="btn-action btn-white">
-        <i class="fa-solid fa-filter" style="color: #38bdf8;"></i>
-        ฟิลเตอร์
-    </button>
-    <button class="btn-action btn-white">
-        <i class="fa-solid fa-eye" style="color: #818cf8;"></i>
-        แสดงคอลัมน์
+<div id="sidebarAuthUser" class="sidebar-auth-section" style="display:none;">
+    <p class="sidebar-section-label">บัญชีของฉัน</p>
+    <a href="./profile.html" class="sidebar-item">
+        <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></span>
+        โปรไฟล์
+    </a>
+    <a href="./orders.html" class="sidebar-item">
+        <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg></span>
+        ประวัติการสั่งซื้อ
+    </a>
+    <a href="./topup.html" class="sidebar-item">
+        <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></span>
+        เติมเงิน
+    </a>
+    <!-- เพิ่มเมนูนี้ -->
+    <a href="./topup.html" class="sidebar-item">
+        <span class="sidebar-item-icon" style="color: #f59e0b;">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+        </span>
+        <span style="color: #d97706; font-weight: 600;">อัปเกรด</span>
+    </a>
+    <button onclick="window.handleLogout()" class="sidebar-item sidebar-logout">
+        <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg></span>
+        ออกจากระบบ
     </button>
 </div>
+
+```
+### แก้ homerent.html 
+```css
+.glass-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    /* แก้ตรงนี้: จาก right: 0 เป็น left: 0 */
+    left: 0;
+    right: auto;
+    width: 280px;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    z-index: 200;
+    /* แก้ transform-origin ด้วย */
+    transform-origin: top left;
+    transform: scale(0.95) translateY(-10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-dropdown.active {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+/* สำหรับ mobile ให้ชิดขวาเหมือนเดิมเพื่อไม่ให้ล้นจอซ้าย */
+@media (max-width: 640px) {
+    .glass-dropdown {
+        left: auto;
+        right: 0;
+        transform-origin: top right;
+        width: 260px;
+    }
+}
 
 ```
