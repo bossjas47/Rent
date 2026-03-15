@@ -1,0 +1,253 @@
+/* ============================================
+   Index Page Specific Styles
+   ============================================ */
+
+.stats-section-wrapper {
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1rem 1.5rem;
+}
+
+.stats-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 1rem;
+}
+
+.stats-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.stats-subtitle {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+.stats-admin-link {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #0ea5e9;
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(14, 165, 233, 0.1);
+}
+
+.stats-admin-link:hover {
+    background: rgba(14, 165, 233, 0.15);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+@media (min-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.stat-card {
+    position: relative;
+    border-radius: 14px;
+    padding: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    background: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+.stat-card-1 { border-left: 4px solid #38bdf8; }
+.stat-card-2 { border-left: 4px solid #818cf8; }
+.stat-card-3 { border-left: 4px solid #34d399; }
+.stat-card-4 { border-left: 4px solid #fbbf24; }
+
+.stat-card-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.stat-card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #1e293b;
+}
+
+@media (max-width: 480px) {
+    .stat-card-value {
+        font-size: 1.5rem;
+    }
+}
+
+.stat-card-unit {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+/* ============================================
+   Products Grid
+   ============================================ */
+#productsGrid {
+    min-height: 300px;
+}
+
+.product-card {
+    background: white;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 14px;
+    padding: 12px;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    border-color: rgba(56, 189, 248, 0.3);
+}
+
+.product-image-wrap {
+    width: 100%;
+    aspect-ratio: 16/10;
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #e0f2fe, #f3e8ff);
+    position: relative;
+}
+
+.product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.product-card:hover .product-img {
+    transform: scale(1.05);
+}
+
+.product-img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+.product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.product-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1e293b;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-category {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.product-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.product-price {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0ea5e9;
+}
+
+.product-price-unit {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* Loading State */
+.skeleton {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-card {
+    background: white;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skeleton-img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    border-radius: 10px;
+}
+
+.skeleton-text {
+    height: 16px;
+    width: 70%;
+}
+
+.skeleton-text-short {
+    height: 12px;
+    width: 40%;
+}
+
+/* Loading Spinner */
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
