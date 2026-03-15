@@ -400,7 +400,7 @@
                     window.auth.onAuthStateChanged(user => {
                         const heroLoginBtn = document.getElementById('heroLoginBtn');
                         if (heroLoginBtn) {
-                            heroLoginBtn.style.display = user ? 'none' : 'block';
+                            heroLoginBtn.style.display = user ? 'none' : 'inline-block';
                         }
                     });
                 }
