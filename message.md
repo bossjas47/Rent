@@ -1,74 +1,235 @@
-### แก้ใน homerent.html ค้นหา  <div id="sidebarAuthUser" class="sidebar-auth-section" style="display:none;">  และเพิ่มเมนูก่อนปุ่ม "ออกจากระบบ":
+### แก้ใน profile.html แก้ส่วน Profile Card (บรรทัด ~109)
 
 ```html
-<div id="sidebarAuthUser" class="sidebar-auth-section" style="display:none;">
-    <p class="sidebar-section-label">บัญชีของฉัน</p>
-    <a href="./profile.html" class="sidebar-item">
-        <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></span>
-        โปรไฟล์
-    </a>
-    <a href="./orders.html" class="sidebar-item">
-        <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg></span>
-        ประวัติการสั่งซื้อ
-    </a>
-    <a href="./topup.html" class="sidebar-item">
-        <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></span>
-        เติมเงิน
-    </a>
-    <!-- เพิ่มเมนูนี้ -->
-    <a href="./topup.html" class="sidebar-item">
-        <span class="sidebar-item-icon" style="color: #f59e0b;">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-            </svg>
-        </span>
-        <span style="color: #d97706; font-weight: 600;">อัปเกรด</span>
-    </a>
-    <button onclick="window.handleLogout()" class="sidebar-item sidebar-logout">
-        <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg></span>
-        ออกจากระบบ
-    </button>
-</div>
+<!-- จาก -->
+<div class="glass-panel-white overflow-hidden mb-5">
+<!-- เป็น -->
+<div class="glass-panel-white liquid-glass-card overflow-hidden mb-5">
+
 
 ```
-### แก้ homerent.html 
+### แก้ profile.html แก้ส่วน Avatar Wrap (บรรทัด ~110)
+```html
+<!-- จาก -->
+<div id="profileAvatarWrap" class="profile-avatar-wrap">
+<!-- เป็น -->
+<div id="profileAvatarWrap" class="profile-avatar-wrap liquid-glass-avatar">
+
+
+```
+### profile.html แก้ส่วน badges ~118 และ 112~
+```html
+<!-- จาก -->
+<div id="profileRoleBadge" class="profile-badge">
+<!-- เป็น -->
+<div id="profileRoleBadge" class="profile-badge liquid-glass-badge">
+
+<!-- และ -->
+<div id="profileJoinBadge" class="profile-badge">
+<!-- เป็น -->
+<div id="profileJoinBadge" class="profile-badge liquid-glass-badge">
+
+```
+
+### profile.html แก้ส่วน Stats Cards (บรรทัด ~129, ~133, ~137)
+
+```html
+<!-- จาก -->
+<div class="stat-card">
+<!-- เป็น -->
+<div class="stat-card liquid-glass-stat">
+
+```
+
+### profile.html แก้ส่วน Form Cards (บรรทัด ~144 และ ~167)
+
+```html
+<!-- จาก -->
+<div class="glass-panel-white p-5 mb-5">
+<!-- เป็น -->
+<div class="glass-panel-white liquid-glass-card p-5 mb-5">
+
+<!-- และ -->
+<div class="glass-panel-white p-5">
+<!-- เป็น -->
+<div class="glass-panel-white liquid-glass-card p-5">
+
+```
+
+### profile.html แก้ส่วน Input Fields (บรรทัด ~150, ~154, ~158, ~173, ~177)
+
+```html
+<!-- จาก -->
+<input type="text" id="editDisplayName" class="form-input" placeholder="ชื่อของคุณ">
+<!-- เป็น -->
+<input type="text" id="editDisplayName" class="form-input liquid-glass-input" placeholder="ชื่อของคุณ">
+
+<!-- ทำเหมือนกันกับ editEmail, editPhone, newPassword, confirmPassword -->
+<input type="email" id="editEmail" class="form-input liquid-glass-input" disabled placeholder="อีเมล">
+<input type="tel" id="editPhone" class="form-input liquid-glass-input" placeholder="08x-xxx-xxxx">
+<input type="password" id="newPassword" class="form-input liquid-glass-input" placeholder="••••••••">
+<input type="password" id="confirmPassword" class="form-input liquid-glass-input" placeholder="••••••••">
+```
+
+### profile.html แก้ส่วนปุ่มเปลี่ยนรหัสผ่าน (บรรทัด ~181)
+
+```html
+<!-- จาก -->
+<button onclick="changePassword()" class="btn-outline w-full py-3 text-sm mt-1">
+<!-- เป็น -->
+<button onclick="changePassword()" class="liquid-glass-button liquid-glass-button-outline w-full py-3 text-sm mt-1">
+```
+
+### 2. profile.css (เพิ่มสไตล์ Liquid Glass ที่ขาด) เพิ่มต่อท้ายไฟล์ (หรือแทรกในส่วนที่เหมาะสม)
+
 ```css
-.glass-dropdown {
-    position: absolute;
-    top: calc(100% + 10px);
-    /* แก้ตรงนี้: จาก right: 0 เป็น left: 0 */
-    left: 0;
-    right: auto;
-    width: 280px;
-    background: rgba(255, 255, 255, 0.98);
-    border: 1px solid rgba(226, 232, 240, 0.8);
+/* ─── Liquid Glass Form Elements ─── */
+
+/* Input Field */
+.liquid-glass-input {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    color: #1e293b;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    width: 100%;
+}
+
+.liquid-glass-input:hover {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(14, 165, 233, 0.3);
+}
+
+.liquid-glass-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(14, 165, 233, 0.5);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1), 0 4px 12px rgba(14, 165, 233, 0.1);
+}
+
+.liquid-glass-input:disabled {
+    background: rgba(241, 245, 249, 0.6);
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* Button Outline Variant */
+.liquid-glass-button {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.liquid-glass-button:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.liquid-glass-button-outline {
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    color: #0ea5e9;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.liquid-glass-button-outline:hover {
+    border-color: rgba(14, 165, 233, 0.6);
+    color: #0284c7;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.15);
+}
+
+/* Form Label สำหรับ Liquid Glass */
+.form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+/* Form Group spacing */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+/* Profile Specific Liquid Glass Enhancements */
+.profile-cover {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.3) 0%, rgba(129, 140, 248, 0.3) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Stat Card Base (ถ้ายังไม่มีใน liquid-glass-stat) */
+.stat-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-    z-index: 200;
-    /* แก้ transform-origin ด้วย */
-    transform-origin: top left;
-    transform: scale(0.95) translateY(-10px);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
 }
 
-.glass-dropdown.active {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-    visibility: visible;
+.stat-card:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* สำหรับ mobile ให้ชิดขวาเหมือนเดิมเพื่อไม่ให้ล้นจอซ้าย */
-@media (max-width: 640px) {
-    .glass-dropdown {
-        left: auto;
-        right: 0;
-        transform-origin: top right;
-        width: 260px;
-    }
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
 }
 
+.stat-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Profile Body Enhancements */
+.profile-body {
+    padding: 60px 20px 24px;
+    position: relative;
+    text-align: center;
+}
+
+.profile-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.profile-email {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+/* Toast Warning Type (เพิ่มเติม) */
+.toast-warning {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+}
 ```
