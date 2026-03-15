@@ -59,54 +59,79 @@ window.closeSidebar = function() {
 };
 
 window.toggleProfileDropdown = function(e) {
-    if (e) e.stopPropagation();
+    e?.stopPropagation();
     const dropdown = document.getElementById('profileDropdown');
     const arrow = document.getElementById('dropdownArrow');
-    const trigger = document.getElementById('profileTrigger');
-    if (!dropdown) return;
     
-    const isActive = dropdown.classList.toggle('active');
-    if (arrow) arrow.style.transform = isActive ? 'rotate(180deg)' : 'rotate(0deg)';
-    if (trigger) trigger.classList.toggle('active', isActive);
+    if (dropdown) {
+        const isActive = dropdown.classList.toggle('active');
+        if (arrow) arrow.style.transform = isActive ? 'rotate(180deg)' : '';
+    }
 };
 
-// Close dropdowns on outside click
-window.addEventListener('click', () => {
-    document.getElementById('profileDropdown')?.classList.remove('active');
-    const arrow = document.getElementById('dropdownArrow');
-    if (arrow) arrow.style.transform = 'rotate(0deg)';
-    document.getElementById('profileTrigger')?.classList.remove('active');
-});
+window.handleMenuClick = function(page) {
+    const routes = {
+        profile: './profile.html',
+        orders: './orders.html',
+        topup: './topup.html',
+        settings: './settings.html'
+    };
+    if (routes[page]) window.location.href = routes[page];
+};
 
 // ── Render User UI ────────────────────────────────────────────────────────────
+function updateBalanceDisplay(balance) {
+    const n = Number(balance) || 0;
+    const fmt = n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    const userBalance = document.getElementById('userBalance');
+    if (userBalance) userBalance.textContent = fmt;
+    
+    const dropdownBalance = document.getElementById('dropdownBalance');
+    if (dropdownBalance) dropdownBalance.textContent = fmt + ' ฿';
+    
+    const sidebarBalance = document.getElementById('sidebarBalance');
+    if (sidebarBalance) sidebarBalance.textContent = fmt;
+}
+
+function updateNameDisplay(name) {
+    const cleanName = (name || 'ผู้ใช้').trim();
+    const initial = cleanName.charAt(0).toUpperCase();
+    
+    const dropdownName = document.getElementById('dropdownName');
+    if (dropdownName) dropdownName.textContent = cleanName;
+    
+    const sidebarUsername = document.getElementById('sidebarUsername');
+    if (sidebarUsername) sidebarUsername.textContent = cleanName;
+    
+    const userAvatar = document.getElementById('userAvatar');
+    if (userAvatar) userAvatar.textContent = initial;
+    
+    const dropdownAvatar = document.getElementById('dropdownAvatar');
+    if (dropdownAvatar) dropdownAvatar.textContent = initial;
+    
+    const sidebarAvatar = document.getElementById('sidebarAvatar');
+    if (sidebarAvatar) sidebarAvatar.textContent = initial;
+}
+
 function showUserUI(user, userData) {
     const name = userData?.displayName || user?.displayName || user?.email?.split('@')[0] || 'ผู้ใช้';
-    const balance = Number(userData?.balance ?? 0).toLocaleString('th-TH');
-    const initial = name.charAt(0).toUpperCase();
+    const balance = userData?.balance ?? 0;
 
-    // Elements
     const loginBtn = document.getElementById('loginBtn');
     const userProfile = document.getElementById('userProfile');
     const sidebarGuest = document.getElementById('sidebarAuthGuest');
     const sidebarUser = document.getElementById('sidebarAuthUser');
     const sidebarStrip = document.getElementById('sidebarUserStrip');
 
-    // Display toggle
     if(loginBtn) loginBtn.style.display = 'none';
-    if(userProfile) userProfile.style.display = 'block';
+    if(userProfile) userProfile.style.display = 'flex';
     if(sidebarGuest) sidebarGuest.style.display = 'none';
     if(sidebarUser) sidebarUser.style.display = 'block';
     if(sidebarStrip) sidebarStrip.style.display = 'flex';
 
-    // Content Update
-    const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-    set('sidebarUsername', name);
-    set('sidebarAvatar', initial);
-    set('userAvatar', initial);
-    set('dropdownName', name);
-    set('dropdownAvatar', initial);
-    set('userBalance', balance);
-    set('sidebarBalance', balance);
+    updateNameDisplay(name);
+    updateBalanceDisplay(balance);
 }
 
 function showGuestUI() {
@@ -116,7 +141,7 @@ function showGuestUI() {
     const sidebarUser = document.getElementById('sidebarAuthUser');
     const sidebarStrip = document.getElementById('sidebarUserStrip');
 
-    if(loginBtn) loginBtn.style.display = 'block';
+    if(loginBtn) loginBtn.style.display = 'flex';
     if(userProfile) userProfile.style.display = 'none';
     if(sidebarGuest) sidebarGuest.style.display = 'block';
     if(sidebarUser) sidebarUser.style.display = 'none';
@@ -157,4 +182,18 @@ function renderMockTable() {
 
 document.addEventListener('DOMContentLoaded', () => {
     renderMockTable();
+    
+    // Close dropdown when click outside
+    document.addEventListener('click', (e) => {
+        const dropdown = document.getElementById('profileDropdown');
+        const trigger = document.getElementById('profileTrigger');
+        
+        if (dropdown && trigger && 
+            !trigger.contains(e.target) && 
+            !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+            const arrow = document.getElementById('dropdownArrow');
+            if (arrow) arrow.style.transform = '';
+        }
+    });
 });
