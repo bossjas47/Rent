@@ -405,25 +405,61 @@ function validateForm() {
     if (btn) btn.disabled = !(selectedFile && selectedPaymentMethod && currentUser);
 }
 
-// ── Submit Topup (ไม่ใช้ Storage) ─────────────────────────────
+// ── EasySlip API Scanner ──────────────────────────────────────
+async function scanSlipWithEasySlip(base64Data) {
+    try {
+        const configSnap = await getDoc(doc(db, 'system', 'config'));
+        if (!configSnap.exists()) return null;
+        const apiKey = configSnap.data().easyslipApiKey;
+        if (!apiKey) return null;
+
+        // ตัด prefix data:image/...;base64, ออก
+        const pureBase64 = base64Data.includes(',') ? base64Data.split(',')[1] : base64Data;
+
+        const res = await fetch('https://developer.easyslip.com/api/v1/verify', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + apiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ data: pureBase64 })
+        });
+
+        const json = await res.json();
+        if (res.ok && json.status === 200 && json.data) {
+            return json.data; // { amount: { amount }, date, ... }
+        }
+        return null;
+    } catch (e) {
+        console.warn('[topup] EasySlip scan error:', e);
+        return null;
+    }
+}
+
+// ── Submit Topup พร้อมสแกนสลิปอัตโนมัติ ──────────────────────
 window.submitTopup = async function (event) {
     event.preventDefault();
     if (!selectedFile || !selectedPaymentMethod || !currentUser) return;
 
     const btn      = document.getElementById('submitBtn');
     const btnText  = document.getElementById('btnText');
+    const statusMsg = document.getElementById('submitStatusMsg');
 
     btn.disabled = true;
     btn.classList.add('loading');
     if (btnText) { btnText.style.opacity = '0'; }
+    if (statusMsg) {
+        const msgSpan = statusMsg.querySelector('i');
+        if (msgSpan) msgSpan.nextSibling ? msgSpan.nextSibling.textContent = 'กำลังอัปโหลดสลิป...' : statusMsg.appendChild(document.createTextNode('กำลังอัปโหลดสลิป...'));
+        statusMsg.style.display = 'block';
+    }
 
     try {
-        // 1. Compress → base64 (ไม่ใช้ Firebase Storage)
+        // 1. Compress → base64
         let slipBase64;
         try {
             slipBase64 = await compressImage(selectedFile);
         } catch {
-            // fallback: FileReader
             slipBase64 = await new Promise((res, rej) => {
                 const r = new FileReader();
                 r.onload  = e => res(e.target.result);
@@ -438,11 +474,18 @@ window.submitTopup = async function (event) {
             showToast('รูปภาพใหญ่เกินไป กรุณาลดขนาดรูปก่อน', 'error');
             btn.disabled = false; btn.classList.remove('loading');
             if (btnText) btnText.style.opacity = '1';
+            if (statusMsg) statusMsg.style.display = 'none';
             return;
         }
 
-        // 2. บันทึกลง Firestore
-        await addDoc(collection(db, 'topup_requests'), {
+        // 2. สแกนสลิปด้วย EasySlip API
+        if (statusMsg) {
+            const msgSpan = statusMsg.querySelector('i');
+            if (msgSpan && msgSpan.nextSibling) msgSpan.nextSibling.textContent = 'กำลังตรวจสอบสลิปอัตโนมัติ...';
+        }
+        const scanResult = await scanSlipWithEasySlip(slipBase64);
+
+        let docData = {
             userId:            currentUser.uid,
             userEmail:         currentUser.email      || '',
             userName:          currentUser.displayName || currentUser.email?.split('@')[0] || 'ผู้ใช้',
@@ -452,16 +495,67 @@ window.submitTopup = async function (event) {
             paymentMethodName: selectedPaymentMethod.name,
             accountNumber:     selectedPaymentMethod.account,
             feePercent:        selectedPaymentMethod.fee,
-            slipBase64,                                  // ✅ base64 แทน Storage URL
+            slipBase64,
             originalFileName:  selectedFile.name,
-            status:            'pending',
             note:              document.getElementById('transferNote')?.value?.slice(0, 500) || '',
-            amount:            0,
             createdAt:         serverTimestamp(),
             updatedAt:         serverTimestamp()
-        });
+        };
 
-        showToast('ส่งคำขอเติมเงินสำเร็จ รอการตรวจสอบ', 'success');
+        if (scanResult) {
+            // สแกนสำเร็จ: ดึงยอดเงินจาก EasySlip
+            const grossAmount = parseFloat(scanResult.amount?.amount) || 0;
+            const feePercent  = selectedPaymentMethod.fee || 0;
+            const netAmount   = Math.floor(grossAmount * (1 - feePercent / 100));
+
+            docData.amount       = netAmount;
+            docData.grossAmount  = grossAmount;
+            docData.status       = 'auto_approved'; // สแกนสำเร็จ → อนุมัติอัตโนมัติ
+            docData.scanResult   = {
+                amount:       grossAmount,
+                date:         scanResult.date || null,
+                sender:       scanResult.sender?.displayName || null,
+                receiver:     scanResult.receiver?.displayName || null,
+                transRef:     scanResult.transRef || null,
+                bankCode:     scanResult.sender?.bank?.code || null,
+                scannedAt:    new Date().toISOString()
+            };
+            docData.verifiedAt   = serverTimestamp();
+            docData.verifiedBy   = 'auto_easyslip';
+
+            // บันทึก request
+            const reqRef = await addDoc(collection(db, 'topup_requests'), docData);
+
+            // เติมเงินให้ผู้ใช้ทันที
+            const userRef  = doc(db, 'users', currentUser.uid);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                const curr = userSnap.data().balance ?? 0;
+                await updateDoc(userRef, { balance: curr + netAmount, updatedAt: serverTimestamp() });
+            }
+            await addDoc(collection(db, 'transactions'), {
+                userId:      currentUser.uid,
+                websiteId:   currentWebsiteId,
+                type:        'credit',
+                amount:      netAmount,
+                description: 'เติมเงินผ่าน ' + (selectedPaymentMethod.name || 'โอนเงิน') + ' (สแกนอัตโนมัติ)',
+                orderId:     reqRef.id,
+                createdAt:   serverTimestamp()
+            });
+
+            if (statusMsg) statusMsg.style.display = 'none';
+            showToast(`เติมเงินสำเร็จ! ยอด ฿${netAmount.toLocaleString('th-TH')} เข้าบัญชีแล้ว`, 'success');
+        } else {
+            // สแกนไม่สำเร็จ (ไม่มี API key หรือสแกนไม่ผ่าน) → รอ admin ตรวจสอบ
+            docData.amount = 0;
+            docData.status = 'pending';
+            docData.scanResult = null;
+            await addDoc(collection(db, 'topup_requests'), docData);
+
+            if (statusMsg) statusMsg.style.display = 'none';
+            showToast('ส่งคำขอเติมเงินสำเร็จ รอการตรวจสอบจากแอดมิน', 'success');
+        }
+
         clearFile();
         const noteEl = document.getElementById('transferNote');
         if (noteEl) noteEl.value = '';
@@ -470,6 +564,7 @@ window.submitTopup = async function (event) {
     } catch (e) {
         console.error('[topup] submitTopup:', e);
         showToast('ส่งไม่สำเร็จ กรุณาลองใหม่', 'error');
+        if (statusMsg) statusMsg.style.display = 'none';
     } finally {
         btn.disabled = false;
         btn.classList.remove('loading');
@@ -848,11 +943,17 @@ async function loadTopupRequests() {
         }
         const canApprove = typeof hasPermission === 'function' ? hasPermission('approve_topup') : true;
         const statusClasses = {
-            pending:  'bg-amber-100 text-amber-700',
-            approved: 'bg-emerald-100 text-emerald-700',
-            rejected: 'bg-red-100 text-red-700'
+            pending:       'bg-amber-100 text-amber-700',
+            approved:      'bg-emerald-100 text-emerald-700',
+            auto_approved: 'bg-sky-100 text-sky-700',
+            rejected:      'bg-red-100 text-red-700'
         };
-        const statusText = { pending:'รอตรวจสอบ', approved:'อนุมัติแล้ว', rejected:'ปฏิเสธ' };
+        const statusText = {
+            pending:       'รอตรวจสอบ',
+            approved:      'อนุมัติแล้ว',
+            auto_approved: '✅ อัตโนมัติ',
+            rejected:      'ปฏิเสธ'
+        };
 
         tbody.innerHTML = requests.map(r => {
             const date = r.createdAt?.toDate
@@ -922,9 +1023,76 @@ async function openTopupModal(requestId) {
         if (content) {
             const date    = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleString('th-TH') : '-';
             const slipSrc = r.slipBase64 || r.slipUrl || '';
+
+            // ─ Scan Result Badge ─
+            let scanBadgeHtml = '';
+            if (r.status === 'auto_approved') {
+                scanBadgeHtml = `
+                <div style="padding:12px 16px;background:linear-gradient(135deg,#d1fae5,#a7f3d0);border:1.5px solid #6ee7b7;border-radius:14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;">
+                    <i class="fa-solid fa-robot" style="color:#059669;font-size:1.2rem;"></i>
+                    <div>
+                        <div style="font-weight:700;color:#065f46;font-size:.9rem;">✅ สแกนสลิปอัตโนมัติสำเร็จ</div>
+                        <div style="font-size:.8rem;color:#047857;">เติมเงินอัตโนมัติ ฿${(r.amount || 0).toLocaleString('th-TH')} แล้ว</div>
+                    </div>
+                </div>`;
+            } else if (r.scanResult === null && r.status === 'pending') {
+                scanBadgeHtml = `
+                <div style="padding:12px 16px;background:linear-gradient(135deg,#fef3c7,#fde68a);border:1.5px solid #fbbf24;border-radius:14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="color:#d97706;font-size:1.2rem;"></i>
+                    <div>
+                        <div style="font-weight:700;color:#92400e;font-size:.9rem;">⚠️ สแกนอัตโนมัติไม่สำเร็จ</div>
+                        <div style="font-size:.8rem;color:#b45309;">กรุณาตรวจสลิปและระบุยอดเงินด้วยตนเอง</div>
+                    </div>
+                </div>`;
+            } else if (r.scanResult && r.status === 'pending') {
+                // มี scan result แต่ยังรอ admin
+                scanBadgeHtml = `
+                <div style="padding:12px 16px;background:linear-gradient(135deg,#dbeafe,#bfdbfe);border:1.5px solid #93c5fd;border-radius:14px;margin-bottom:14px;">
+                    <div style="font-weight:700;color:#1e40af;font-size:.9rem;margin-bottom:6px;"><i class="fa-solid fa-magnifying-glass-dollar mr-1"></i>ผลสแกนสลิป (EasySlip)</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.82rem;">
+                        <div><span style="color:#64748b;">ยอดเงิน:</span> <b style="color:#1e40af;">฿${(r.scanResult.amount || 0).toLocaleString('th-TH')}</b></div>
+                        ${r.scanResult.sender ? `<div><span style="color:#64748b;">ผู้โอน:</span> <b>${escapeHtml(r.scanResult.sender)}</b></div>` : ''}
+                        ${r.scanResult.transRef ? `<div style="grid-column:1/-1;"><span style="color:#64748b;">Ref:</span> <code style="font-size:.78rem;">${escapeHtml(r.scanResult.transRef)}</code></div>` : ''}
+                    </div>
+                </div>`;
+            }
+
+            // ─ Scan Result Details (for auto_approved) ─
+            let scanDetailsHtml = '';
+            if (r.scanResult && r.status === 'auto_approved') {
+                scanDetailsHtml = `
+                <div style="padding:12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;margin-bottom:14px;font-size:.82rem;">
+                    <div style="font-weight:700;color:#166534;margin-bottom:6px;"><i class="fa-solid fa-circle-info mr-1"></i>รายละเอียดจากสลิป</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                        <div><span style="color:#64748b;">ยอดเต็ม:</span> <b>฿${(r.grossAmount || r.amount || 0).toLocaleString('th-TH')}</b></div>
+                        <div><span style="color:#64748b;">ยอดสุทธิ์:</span> <b style="color:#059669;">฿${(r.amount || 0).toLocaleString('th-TH')}</b></div>
+                        ${r.scanResult.sender ? `<div><span style="color:#64748b;">ผู้โอน:</span> <b>${escapeHtml(r.scanResult.sender)}</b></div>` : ''}
+                        ${r.scanResult.receiver ? `<div><span style="color:#64748b;">ผู้รับ:</span> <b>${escapeHtml(r.scanResult.receiver)}</b></div>` : ''}
+                        ${r.scanResult.transRef ? `<div style="grid-column:1/-1;"><span style="color:#64748b;">Ref:</span> <code style="font-size:.78rem;">${escapeHtml(r.scanResult.transRef)}</code></div>` : ''}
+                    </div>
+                </div>`;
+            }
+
+            // ─ approveAmount input (for pending) ─
+            const approveAmountHtml = (r.status === 'pending') ? `
+                <div style="margin-bottom:14px;">
+                    <label style="display:block;font-size:.85rem;font-weight:700;color:#374151;margin-bottom:6px;">
+                        <i class="fa-solid fa-coins text-amber-500 mr-1"></i>ระบุยอดเงินที่อนุมัติ (บาท)
+                    </label>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="color:#64748b;font-weight:700;฿">฿</span>
+                        <input type="number" id="approveAmount" min="1" step="0.01"
+                            value="${r.scanResult?.amount || r.amount || ''}"
+                            placeholder="ระบุยอดเงิน..."
+                            style="flex:1;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:1rem;font-weight:700;color:#1e293b;outline:none;"
+                            onfocus="this.style.borderColor='#38bdf8'" onblur="this.style.borderColor='#e2e8f0'">
+                    </div>
+                    ${r.feePercent > 0 ? `<p style="font-size:.78rem;color:#94a3b8;margin-top:4px;">* ค่าธรรมเนียม ${r.feePercent}% จะถูกหักอัตโนมัติ</p>` : ''}
+                </div>` : '';
+
             content.innerHTML = `
-                <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding:16px;background:#f8fafc;border-radius:16px;">
-                    <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#38bdf8,#818cf8);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.4rem;">
+                <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;padding:16px;background:#f8fafc;border-radius:16px;">
+                    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#38bdf8,#818cf8);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.3rem;">
                         ${escapeHtml((r.userName || 'U')[0].toUpperCase())}
                     </div>
                     <div>
@@ -932,26 +1100,31 @@ async function openTopupModal(requestId) {
                         <div style="color:#64748b;font-size:.875rem;">${escapeHtml(r.userEmail || '')}</div>
                     </div>
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-                    <div style="padding:14px;background:#f8fafc;border-radius:12px;">
-                        <div style="font-size:.8rem;color:#94a3b8;margin-bottom:4px;">ช่องทาง</div>
-                        <div style="font-weight:700;color:#1e293b;">${escapeHtml(r.paymentMethodName || 'ไม่ระบุ')}</div>
+                ${scanBadgeHtml}
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+                    <div style="padding:12px;background:#f8fafc;border-radius:12px;">
+                        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:3px;">ช่องทาง</div>
+                        <div style="font-weight:700;color:#1e293b;font-size:.9rem;">${escapeHtml(r.paymentMethodName || 'ไม่ระบุ')}</div>
                     </div>
-                    <div style="padding:14px;background:#f8fafc;border-radius:12px;">
-                        <div style="font-size:.8rem;color:#94a3b8;margin-bottom:4px;">เวลา</div>
-                        <div style="font-weight:700;color:#1e293b;font-size:.85rem;">${escapeHtml(date)}</div>
+                    <div style="padding:12px;background:#f8fafc;border-radius:12px;">
+                        <div style="font-size:.78rem;color:#94a3b8;margin-bottom:3px;">เวลา</div>
+                        <div style="font-weight:700;color:#1e293b;font-size:.82rem;">${escapeHtml(date)}</div>
                     </div>
                 </div>
+                ${scanDetailsHtml}
+                ${approveAmountHtml}
                 ${slipSrc ? `
-                <div style="margin-bottom:16px;">
-                    <div style="font-size:.85rem;color:#94a3b8;margin-bottom:8px;">สลิปโอนเงิน</div>
+                <div style="margin-bottom:14px;">
+                    <div style="font-size:.82rem;color:#94a3b8;margin-bottom:6px;">สลิปโอนเงิน</div>
                     <img src="${escapeHtml(slipSrc)}" style="width:100%;border-radius:12px;border:2px solid #e2e8f0;cursor:zoom-in;" onclick="window.open('${escapeHtml(slipSrc)}', '_blank')">
                 </div>` : ''}
-                ${r.note ? `<div style="padding:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:12px;font-size:.85rem;color:#92400e;margin-bottom:12px;">${escapeHtml(r.note)}</div>` : ''}
+                ${r.note ? `<div style="padding:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:12px;font-size:.85rem;color:#92400e;margin-bottom:10px;">${escapeHtml(r.note)}</div>` : ''}
                 ${r.rejectionReason ? `<div style="padding:12px;background:#fef2f2;border:1px solid #fecdd3;border-radius:12px;font-size:.85rem;color:#dc2626;"><b>เหตุผล:</b> ${escapeHtml(r.rejectionReason)}</div>` : ''}
             `;
         }
+
         const canApprove = typeof hasPermission === 'function' ? hasPermission('approve_topup') : false;
+        // แสดงปุ่มสำหรับ pending เท่านั้น (auto_approved ไม่ต้องอนุมัติอีก)
         if (actions)    actions.style.display    = (r.status === 'pending' && canApprove) ? 'flex' : 'none';
         if (rejectForm) rejectForm.style.display = 'none';
 
@@ -989,29 +1162,37 @@ async function approveTopup() {
     if (!currentTopupRequest) return;
     try {
         const amountInput = document.getElementById('approveAmount');
-        const amount = parseFloat(amountInput?.value) || currentTopupRequest.amount || 0;
+        const grossAmount = parseFloat(amountInput?.value) || currentTopupRequest.amount || 0;
+        if (grossAmount <= 0) { showToast('กรุณาระบุยอดเงินที่ถูกต้อง', 'error'); return; }
+
+        // คำนวณค่าธรรมเนียม
+        const feePercent = currentTopupRequest.feePercent || 0;
+        const netAmount  = Math.floor(grossAmount * (1 - feePercent / 100));
 
         await updateDoc(doc(db, 'topup_requests', currentTopupRequest.id), {
-            status: 'approved', amount,
-            verifiedAt: serverTimestamp(), verifiedBy: 'admin', updatedAt: serverTimestamp()
+            status:      'approved',
+            amount:      netAmount,
+            grossAmount: grossAmount,
+            verifiedAt:  serverTimestamp(),
+            verifiedBy:  'admin',
+            updatedAt:   serverTimestamp()
         });
         const userRef  = doc(db, 'users', currentTopupRequest.userId);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
             const curr = userSnap.data().balance ?? 0;
-            await updateDoc(userRef, {
-                balance: curr + amount, updatedAt: serverTimestamp()
-            });
+            await updateDoc(userRef, { balance: curr + netAmount, updatedAt: serverTimestamp() });
         }
         await addDoc(collection(db, 'transactions'), {
-            userId: currentTopupRequest.userId,
-            websiteId: currentTopupRequest.websiteId || null,
-            type: 'credit', amount,
-            description: 'เติมเงินผ่าน ' + (currentTopupRequest.paymentMethodName || 'โอนเงิน'),
-            orderId: currentTopupRequest.id,
-            createdAt: serverTimestamp()
+            userId:      currentTopupRequest.userId,
+            websiteId:   currentTopupRequest.websiteId || null,
+            type:        'credit',
+            amount:      netAmount,
+            description: 'เติมเงินผ่าน ' + (currentTopupRequest.paymentMethodName || 'โอนเงิน') + ' (อนุมัติโดย Admin)',
+            orderId:     currentTopupRequest.id,
+            createdAt:   serverTimestamp()
         });
-        showToast('อนุมัติรายการสำเร็จ', 'success');
+        showToast(`อนุมัติสำเร็จ! เติมเงิน ฿${netAmount.toLocaleString('th-TH')} แล้ว`, 'success');
         closeTopupModal();
         loadTopupRequests();
     } catch (e) {

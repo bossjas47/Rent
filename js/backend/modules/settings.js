@@ -3,6 +3,22 @@
 let _currentKeywords = [];
 let _currentShopTypes = [];
 
+// รายชื่อ Google Fonts URL สำหรับ preview
+const _FONT_GOOGLE_URLS = {
+    'Prompt':             'https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap',
+    'Sarabun':            'https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap',
+    'Kanit':              'https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap',
+    'Mitr':               'https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&display=swap',
+    'Noto Sans Thai':     'https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap',
+    'IBM Plex Sans Thai': 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap',
+    'Chakra Petch':       'https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&display=swap',
+    'Inter':              'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap',
+    'Poppins':            'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap',
+    'Roboto':             'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap',
+    'Nunito':             'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap',
+    'Outfit':             'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap'
+};
+
 async function loadSiteSettings() {
     try {
         const { doc, getDoc } = window.firestoreFns;
@@ -42,6 +58,28 @@ async function loadSiteSettings() {
             if (adminLetter) adminLetter.textContent = letter;
             document.title = name + ' | Admin Panel';
         }
+        // ── Font Setting ──
+        const fontId = d.fontId || 'Prompt';
+        const fontSel = document.getElementById('ss_fontId');
+        if (fontSel) {
+            fontSel.value = fontId;
+            if (typeof window.previewFont === 'function') {
+                window.previewFont(fontId);
+            }
+        }
+        // ── EasySlip API Key (โหลดจาก system/config) ──
+        try {
+            const configSnap = await getDoc(doc(db, 'system', 'config'));
+            if (configSnap.exists()) {
+                const cfg = configSnap.data();
+                const easyslipEl = document.getElementById('ss_easyslipApiKey');
+                if (easyslipEl && cfg.easyslipApiKey) {
+                    easyslipEl.value = cfg.easyslipApiKey;
+                }
+            }
+        } catch (e2) {
+            console.warn('Load easyslip key error:', e2);
+        }
     } catch (e) {
         console.warn('Load site settings error:', e);
     }
@@ -51,44 +89,56 @@ async function saveSiteSettings() {
     if (!checkAccess('manage_settings')) return;
     try {
         const { doc, setDoc } = window.firestoreFns;
+        const fontId = document.getElementById('ss_fontId')?.value || 'Prompt';
         const data = {
-            siteName: document.getElementById('ss_siteName')?.value || '',
+            siteName:    document.getElementById('ss_siteName')?.value    || '',
             description: document.getElementById('ss_description')?.value || '',
-            seoTitle: document.getElementById('ss_seoTitle')?.value || '',
-            siteUrl: document.getElementById('ss_siteUrl')?.value || '',
-            favicon: document.getElementById('ss_favicon')?.value || '',
-            ogImage: document.getElementById('ss_ogImage')?.value || '',
-            line: document.getElementById('ss_line')?.value || '',
-            facebook: document.getElementById('ss_facebook')?.value || '',
-            discord: document.getElementById('ss_discord')?.value || '',
-            phone: document.getElementById('ss_phone')?.value || '',
-            email: document.getElementById('ss_email')?.value || '',
-            tiktok: document.getElementById('ss_tiktok')?.value || '',
-            shopTypes: _currentShopTypes,
-            keywords: _currentKeywords,
-            updatedAt: new Date().toISOString()
+            seoTitle:    document.getElementById('ss_seoTitle')?.value    || '',
+            siteUrl:     document.getElementById('ss_siteUrl')?.value     || '',
+            favicon:     document.getElementById('ss_favicon')?.value     || '',
+            ogImage:     document.getElementById('ss_ogImage')?.value     || '',
+            line:        document.getElementById('ss_line')?.value        || '',
+            facebook:    document.getElementById('ss_facebook')?.value    || '',
+            discord:     document.getElementById('ss_discord')?.value     || '',
+            phone:       document.getElementById('ss_phone')?.value       || '',
+            email:       document.getElementById('ss_email')?.value       || '',
+            tiktok:      document.getElementById('ss_tiktok')?.value      || '',
+            shopTypes:   _currentShopTypes,
+            keywords:    _currentKeywords,
+            fontId,
+            updatedAt:   new Date().toISOString()
         };
+
+        // ── EasySlip API Key: บันทึกลง system/config ──
+        const easyslipApiKey = document.getElementById('ss_easyslipApiKey')?.value?.trim() || '';
+        if (easyslipApiKey !== undefined) {
+            await setDoc(doc(db, 'system', 'config'), { easyslipApiKey }, { merge: true });
+        }
+
         await setDoc(doc(db, 'system', 'site_settings'), data, { merge: true });
+
         // ── Propagate site name across all admin UI elements ──
         if (data.siteName) {
             const name   = data.siteName;
             const letter = name.charAt(0).toUpperCase();
-            // Sidebar brand
             const adminName = document.getElementById('adminSiteName');
             if (adminName) adminName.textContent = name;
             const adminLetter = document.getElementById('adminLogoLetter');
             if (adminLetter) adminLetter.textContent = letter;
-            // Old pattern fallback
             const sidebarTitle = document.querySelector('#sidebar h1');
             if (sidebarTitle) sidebarTitle.textContent = name;
-            // Page <title>
             document.title = name + ' | Admin Panel';
-            // Footer / brand references on any page
             document.querySelectorAll('.site-name, .sidebar-site-name, #sidebarSiteName').forEach(el => {
                 el.textContent = name;
             });
         }
-        showToast('บันทึกการตั้งค่าสำเร็จ ✓  ชื่อเว็บอัปเดตทั่วทุกหน้าแล้ว', 'success');
+        // ── Apply font ทันที ──
+        if (typeof window.previewFont === 'function') {
+            window.previewFont(fontId);
+        }
+        // บันทึก font ลง localStorage เพื่อให้ทุกหน้าใช้ได้ทันที
+        try { localStorage.setItem('site_font', fontId); } catch {}
+        showToast('บันทึกการตั้งค่าสำเร็จ ✓  Font: ' + fontId, 'success');
     } catch (e) {
         console.error('Save site settings error:', e);
         showToast('บันทึกไม่สำเร็จ: ' + e.message, 'error');
@@ -145,6 +195,55 @@ function updateSeoPreview() {
     if (el3) el3.textContent = desc;
 }
 
+// ── EasySlip API Key toggle visibility ──
+function toggleApiKeyVisibility() {
+    const input = document.getElementById('ss_easyslipApiKey');
+    const icon  = document.getElementById('apiKeyEyeIcon');
+    if (!input) return;
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) { icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); }
+    } else {
+        input.type = 'password';
+        if (icon) { icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
+    }
+}
+
+// ── ทดสอบ EasySlip API Key ──
+async function testEasySlipKey() {
+    const key = document.getElementById('ss_easyslipApiKey')?.value?.trim();
+    const resultEl = document.getElementById('easyslipTestResult');
+    if (!key) { showToast('กรุณาใส่ API Key ก่อน', 'error'); return; }
+    if (resultEl) {
+        resultEl.className = 'mt-3 p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-700';
+        resultEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>กำลังทดสอบ API Key...';
+        resultEl.classList.remove('hidden');
+    }
+    try {
+        const res = await fetch('https://developer.easyslip.com/api/v1/verify', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: 'test' })
+        });
+        if (res.status === 401 || res.status === 403) {
+            if (resultEl) {
+                resultEl.className = 'mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700';
+                resultEl.innerHTML = '<i class="fa-solid fa-circle-xmark mr-2"></i>API Key ไม่ถูกต้องหรือหมดอายุ';
+            }
+        } else {
+            if (resultEl) {
+                resultEl.className = 'mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700';
+                resultEl.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i>API Key ถูกต้อง — พร้อมใช้งานสแกนสลิปอัตโนมัติ';
+            }
+        }
+    } catch (e) {
+        if (resultEl) {
+            resultEl.className = 'mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700';
+            resultEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2"></i>ไม่สามารถทดสอบได้ (CORS) — ลองบันทึกแล้วทดสอบจากหน้า Topup';
+        }
+    }
+}
+
 // Description char counter
 document.addEventListener('DOMContentLoaded', () => {
     const descEl = document.getElementById('ss_description');
@@ -161,4 +260,3 @@ document.addEventListener('DOMContentLoaded', () => {
     if (seoTitleEl) seoTitleEl.addEventListener('input', updateSeoPreview);
     if (siteNameEl) siteNameEl.addEventListener('input', updateSeoPreview);
 });
-

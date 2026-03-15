@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="css/admin.css">
-
+    <!-- Font Loader: โหลด font จาก Firestore และ apply ทุกหน้า -->
+    <script type="module" src="js/font-loader.js"></script>
 </head>
 <body class="antialiased text-slate-800">
 
@@ -504,7 +505,8 @@
                             <select id="topupStatusFilter" onchange="loadTopupRequests()" class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100">
                                 <option value="all">ทั้งหมด</option>
                                 <option value="pending" selected>รอตรวจสอบ</option>
-                                <option value="approved">อนุมัติแล้ว</option>
+                                <option value="auto_approved">✅ อัตโนมัติ (EasySlip)</option>
+                                <option value="approved">อนุมัติโดย Admin</option>
                                 <option value="rejected">ปฏิเสธแล้ว</option>
                             </select>
                             <button onclick="loadTopupRequests()" class="px-4 py-3 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-colors">
@@ -1149,6 +1151,93 @@
                             <div class="flex items-center gap-3 bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 focus-within:border-sky-400 transition-all">
                                 <i class="fa-brands fa-tiktok text-slate-800 text-xl w-6 text-center"></i>
                                 <input type="text" id="ss_tiktok" placeholder="TikTok @username" class="flex-1 bg-transparent focus:outline-none text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ══ Font Settings ══ -->
+                    <div class="mt-6 pt-6 border-t border-slate-200">
+                        <h4 class="font-bold text-slate-700 flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-font text-violet-500"></i> ตั้งค่า Font เว็บไซต์
+                            <span class="text-xs font-normal text-slate-400 ml-1">บังคับใช้ทุกหน้า</span>
+                        </h4>
+                        <div class="bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-200 rounded-2xl p-5">
+                            <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-4">
+                                <div class="flex-1">
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">เลือก Font หลัก</label>
+                                    <select id="ss_fontId" onchange="previewFont(this.value)"
+                                        class="w-full px-4 py-3 bg-white border-2 border-violet-200 rounded-xl focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all font-medium text-slate-700">
+                                        <option value="Prompt">Prompt (ค่าเริ่มต้น) — ภาษาไทย</option>
+                                        <option value="Sarabun">Sarabun — ภาษาไทย</option>
+                                        <option value="Kanit">Kanit — ภาษาไทย</option>
+                                        <option value="Mitr">Mitr — ภาษาไทย</option>
+                                        <option value="Noto Sans Thai">Noto Sans Thai — ภาษาไทย</option>
+                                        <option value="IBM Plex Sans Thai">IBM Plex Sans Thai — ภาษาไทย</option>
+                                        <option value="Chakra Petch">Chakra Petch — ภาษาไทย</option>
+                                        <option value="Inter">Inter — International</option>
+                                        <option value="Poppins">Poppins — International</option>
+                                        <option value="Roboto">Roboto — International</option>
+                                        <option value="Nunito">Nunito — International</option>
+                                        <option value="Outfit">Outfit — International</option>
+                                    </select>
+                                </div>
+                                <div class="flex gap-2 mt-1">
+                                    <button type="button" onclick="previewFont(document.getElementById('ss_fontId').value)"
+                                        class="px-4 py-2.5 bg-violet-100 hover:bg-violet-200 text-violet-700 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2">
+                                        <i class="fa-solid fa-eye"></i> ดูตัวอย่าง
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Font Preview Box -->
+                            <div id="fontPreviewBox" class="bg-white rounded-xl border border-violet-200 p-4">
+                                <div class="text-xs text-slate-400 mb-2 font-mono">ตัวอย่างข้อความ (Preview)</div>
+                                <div id="fontPreviewText" class="text-2xl font-bold text-slate-800 mb-1">สวัสดีครับ Hello World 123</div>
+                                <div id="fontPreviewBody" class="text-sm text-slate-600">ข้อความปกติ — ระบบเติมเงิน เช่าเว็บไซต์ ร้านค้าออนไลน์ The quick brown fox jumps over the lazy dog.</div>
+                                <div class="mt-2 flex gap-3 items-center">
+                                    <span id="fontPreviewBold" class="text-sm font-bold text-slate-700">Bold Text</span>
+                                    <span id="fontPreviewLight" class="text-sm font-light text-slate-500">Light Text</span>
+                                    <span id="fontPreviewName" class="text-xs text-violet-500 font-mono ml-auto">Prompt</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-3 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-info text-violet-400"></i>
+                                Font ที่เลือกจะบังคับใช้กับทุกหน้าของเว็บไซต์ทันทีหลังบันทึก
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ══ EasySlip API Key ══ -->
+                    <div class="mt-6 pt-6 border-t border-slate-200">
+                        <h4 class="font-bold text-slate-700 flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-qrcode text-emerald-500"></i> EasySlip API Key
+                            <span class="text-xs font-normal text-slate-400 ml-1">สำหรับสแกนสลิปอัตโนมัติ</span>
+                        </h4>
+                        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-5">
+                            <div class="flex flex-col sm:flex-row gap-3 items-start">
+                                <div class="flex-1">
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">API Key</label>
+                                    <div class="relative">
+                                        <input type="password" id="ss_easyslipApiKey" placeholder="ใส่ EasySlip API Key ที่นี่..."
+                                            class="w-full px-4 py-3 bg-white border-2 border-emerald-200 rounded-xl focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all font-mono text-sm pr-12">
+                                        <button type="button" onclick="toggleApiKeyVisibility()" id="toggleApiKeyBtn"
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                                            <i class="fa-solid fa-eye" id="apiKeyEyeIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2 mt-6 sm:mt-0">
+                                    <button type="button" onclick="testEasySlipKey()"
+                                        class="px-4 py-3 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-xl font-semibold text-sm transition-colors flex items-center gap-2 whitespace-nowrap">
+                                        <i class="fa-solid fa-plug"></i> ทดสอบ
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="easyslipTestResult" class="mt-3 hidden"></div>
+                            <div class="mt-3 p-3 bg-white/70 rounded-xl border border-emerald-200">
+                                <p class="text-xs text-slate-600 flex items-start gap-2">
+                                    <i class="fa-solid fa-circle-info text-emerald-500 mt-0.5"></i>
+                                    <span>เมื่อตั้งค่า API Key แล้ว ระบบจะสแกนสลิปอัตโนมัติเมื่อผู้ใช้ส่งคำขอเติมเงิน — ยอดเงินจะถูกตรวจสอบและเติมเข้าบัญชีโดยอัตโนมัติ<br>สมัครได้ที่ <a href="https://easyslip.com" target="_blank" class="text-emerald-600 underline font-semibold">easyslip.com</a></span>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -2002,6 +2091,47 @@
     <script src="js/backend/modules/fake-stats.js"></script>
     <script src="js/backend/modules/redeem-codes.js"></script>
     <script src="js/backend/modules/auth.js"></script>
+
+    <!-- Font Preview JS -->
+    <script type="module">
+    import { AVAILABLE_FONTS, applyFont } from './js/font-loader.js';
+    // Preview font ใน admin panel
+    window.previewFont = function(fontId) {
+        const font = AVAILABLE_FONTS.find(f => f.id === fontId);
+        if (!font) return;
+        // Load Google Font เพื่อ preview
+        const existing = document.querySelector(`link[data-preview-font="${fontId}"]`);
+        if (!existing) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = font.googleUrl;
+            link.setAttribute('data-preview-font', fontId);
+            document.head.appendChild(link);
+        }
+        // Update preview box
+        const box = document.getElementById('fontPreviewBox');
+        const previewText  = document.getElementById('fontPreviewText');
+        const previewBody  = document.getElementById('fontPreviewBody');
+        const previewBold  = document.getElementById('fontPreviewBold');
+        const previewLight = document.getElementById('fontPreviewLight');
+        const previewName  = document.getElementById('fontPreviewName');
+        if (box)         box.style.fontFamily = font.stack;
+        if (previewText)  previewText.style.fontFamily  = font.stack;
+        if (previewBody)  previewBody.style.fontFamily  = font.stack;
+        if (previewBold)  previewBold.style.fontFamily  = font.stack;
+        if (previewLight) previewLight.style.fontFamily = font.stack;
+        if (previewName)  previewName.textContent = font.id;
+    };
+    // เรียก preview เมื่อโหลด settings แล้ว
+    document.addEventListener('DOMContentLoaded', () => {
+        const sel = document.getElementById('ss_fontId');
+        if (sel) {
+            // ตั้งค่า default = Prompt
+            sel.value = 'Prompt';
+            previewFont('Prompt');
+        }
+    });
+    </script>
 
     <!-- Fee Preview JS -->
     <script>
