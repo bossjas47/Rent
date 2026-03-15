@@ -1,357 +1,448 @@
-### แก้ใน index.html
+### แก้ใน homerent.html
 
 ```html
-<body class="bg-slate-50 font-[Prompt] text-slate-800">
-    <div id="toastContainer"></div>
-    <div id="sidebarOverlay" class="sidebar-overlay" onclick="window.closeSidebar()"></div>
-    
-    <!-- Sidebar (เหมือนเดิม) -->
-    <aside id="sidebarDrawer" class="sidebar-drawer">
-        <!-- ... Sidebar content เหมือนเดิม ... -->
-        <div class="sidebar-header">
-            <a href="./index.html" class="sidebar-logo">
-                <div class="sidebar-logo-icon">P</div>
-                <span class="sidebar-logo-text">PanderX</span>
-            </a>
-            <button class="sidebar-close-btn" onclick="window.closeSidebar()" aria-label="ปิดเมนู">
-                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-        <div id="sidebarUserStrip" class="sidebar-user-strip" style="display:none;">
-            <div id="sidebarAvatar" class="sidebar-avatar">U</div>
-            <div class="sidebar-user-info">
-                <div id="sidebarUsername" class="sidebar-username">กำลังโหลด...</div>
-                <div class="sidebar-balance">
-                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 9l10 13 10-13-10-7z"/></svg>
-                    <span id="sidebarBalance">0.00</span> บาท
-                </div>
-            </div>
-        </div>
-        <nav class="sidebar-nav">
-            <p class="sidebar-section-label">เมนูหลัก</p>
-            <a href="./index.html" class="sidebar-item active">
-                <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></span>
-                หน้าหลัก
-            </a>
-            <a href="./homerent.html" class="sidebar-item">
-                <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg></span>
-                เช่าเว็บไซต์
-            </a>
-            <a href="./upgrade.html" class="sidebar-item">
-                <span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></span>
-                อัปเกรด
-                <span class="sidebar-badge">NEW</span>
-            </a>
-        </nav>
-        <div class="sidebar-divider"></div>
-        <div id="sidebarAuthGuest" style="display:none;">
-            <p class="sidebar-section-label">บัญชีผู้ใช้</p>
-            <button onclick="window.goToLogin(); window.closeSidebar();" class="sidebar-auth-btn sidebar-login-btn">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
-                เข้าสู่ระบบ
-            </button>
-            <button onclick="window.goToRegister(); window.closeSidebar();" class="sidebar-auth-btn sidebar-register-btn">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-                สมัครสมาชิก
-            </button>
-        </div>
-        <div id="sidebarAuthUser" style="display:none;">
-            <p class="sidebar-section-label">บัญชีของฉัน</p>
-            <a href="./profile.html" class="sidebar-item"><span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>โปรไฟล์</a>
-            <a href="./orders.html" class="sidebar-item"><span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg></span>ประวัติการสั่งซื้อ</a>
-            <a href="./topup.html" class="sidebar-item"><span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></span>เติมเงิน</a>
-            <a href="./settings.html" class="sidebar-item"><span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></span>ตั้งค่า</a>
-            <a id="sidebarAdminBtn" href="./admin.html" class="sidebar-item" style="display:none;"><span class="sidebar-item-icon" style="background:rgba(124,58,237,0.1);color:#7c3aed;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></span>Admin Panel</a>
-            <button onclick="window.handleLogout()" class="sidebar-item sidebar-logout"><span class="sidebar-item-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg></span>ออกจากระบบ</button>
-        </div>
-        <div class="sidebar-version">PanderX v2.0 © 2026</div>
-    </aside>
+<div class="action-btns">
+    <button class="btn-action btn-black">
+        <i class="fa-solid fa-plus" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"></i>
+        สร้างร้านค้า
+    </button>
+    <button class="btn-action btn-white">
+        <i class="fa-solid fa-filter" style="color: #38bdf8;"></i>
+        ฟิลเตอร์
+    </button>
+    <button class="btn-action btn-white">
+        <i class="fa-solid fa-eye" style="color: #818cf8;"></i>
+        แสดงคอลัมน์
+    </button>
+</div>
 
-    <!-- Navbar (เหมือนเดิม) -->
-    <nav class="fixed top-3 left-3 right-3 z-50 navbar-liquid-glass rounded-2xl px-4 py-2.5 flex items-center justify-between">
-        <button id="hamburgerBtn" class="hamburger-btn" onclick="window.toggleSidebar(event)" aria-expanded="false" aria-label="เปิดเมนู">
-            <span class="hamburger-bar"></span>
-            <span class="hamburger-bar"></span>
-            <span class="hamburger-bar"></span>
-        </button>
-        <a href="./index.html" class="navbar-brand text-xl md:text-2xl">PanderX</a>
-        <div class="flex items-center gap-2">
-            <a href="./login.html" id="loginBtn" class="btn-liquid px-3 py-1.5 text-sm font-medium hidden" style="display:none;">เข้าสู่ระบบ</a>
-            <div id="userProfile" class="profile-dropdown-container hidden" style="display:none;">
-                <button class="profile-trigger" id="profileTrigger" onclick="window.toggleProfileDropdown(event)">
-                    <div class="balance-pill hidden sm:flex">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 9l10 13 10-13-10-7z"/></svg>
-                        <span id="userBalance">0.00</span>
-                    </div>
-                    <div class="avatar-glass" id="userAvatar">U</div>
-                    <svg class="w-3 h-3 text-slate-400 transition-transform duration-200" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </button>
-                <div class="glass-dropdown" id="profileDropdown">
-                    <div class="p-3 border-b border-slate-100">
-                        <div class="flex items-center gap-3">
-                            <div class="avatar-glass w-10 h-10 text-base" id="dropdownAvatar">U</div>
-                            <div class="min-w-0 flex-1">
-                                <div class="font-bold text-slate-800 truncate text-sm" id="dropdownName">ผู้ใช้</div>
-                                <div class="text-xs text-slate-500 flex items-center gap-1 mt-0.5"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span><span>ออนไลน์</span></div>
-                            </div>
-                        </div>
-                        <div class="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center">
-                            <span class="text-xs text-slate-500">ยอดคงเหลือ</span>
-                            <span class="balance-pill" id="dropdownBalance">0.00 ฿</span>
-                        </div>
-                    </div>
-                    <div class="py-1">
-                        <div class="dropdown-item" onclick="window.handleMenuClick('profile')"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>โปรไฟล์ของฉัน</span></div>
-                        <div class="dropdown-item" onclick="window.handleMenuClick('orders')"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg><span>ประวัติการสั่งซื้อ</span></div>
-                        <div class="dropdown-item" onclick="window.handleMenuClick('topup')"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg><span>เติมเงิน</span></div>
-                        <div class="dropdown-item" onclick="window.handleMenuClick('settings')"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span>ตั้งค่า</span></div>
-                        <div id="adminPanelBtn" class="dropdown-item admin-item" onclick="window.location.href='./admin.html'" style="display:none;"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span>Admin Panel</span></div>
-                        <div class="dropdown-item logout-item" onclick="window.handleLogout()"><svg class="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg><span>ออกจากระบบ</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- ========================================== -->
-    <!-- STATS SECTION (ย้ายขึ้นมาบนสุด) -->
-    <!-- ========================================== -->
-    <div class="w-full max-w-6xl mx-auto px-4 pt-24 pb-6">
-        <div class="stats-header-v2 mb-4">
-            <div class="flex items-center gap-3 justify-center md:justify-start">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-sky-500/30">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-slate-800">สถิติการใช้งาน</h2>
-                    <p id="serviceAge" class="text-xs text-slate-500">กำลังโหลด...</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="stats-grid-v2">
-            <div class="stat-card-v2 stat-today">
-                <div class="stat-icon-bg"><i class="fa-solid fa-sun"></i></div>
-                <div class="stat-content">
-                    <span class="stat-label">วันนี้</span>
-                    <span class="stat-value" id="statToday">0</span>
-                </div>
-                <div class="stat-trend up"><i class="fa-solid fa-arrow-trend-up"></i></div>
-            </div>
-
-            <div class="stat-card-v2 stat-week">
-                <div class="stat-icon-bg"><i class="fa-solid fa-calendar-week"></i></div>
-                <div class="stat-content">
-                    <span class="stat-label">สัปดาห์นี้</span>
-                    <span class="stat-value" id="statWeek">0</span>
-                </div>
-                <div class="stat-trend"><i class="fa-solid fa-minus"></i></div>
-            </div>
-
-            <div class="stat-card-v2 stat-month">
-                <div class="stat-icon-bg"><i class="fa-solid fa-calendar-days"></i></div>
-                <div class="stat-content">
-                    <span class="stat-label">เดือนนี้</span>
-                    <span class="stat-value" id="statMonth">0</span>
-                </div>
-                <div class="stat-trend"><i class="fa-solid fa-minus"></i></div>
-            </div>
-
-            <div class="stat-card-v2 stat-total">
-                <div class="stat-icon-bg"><i class="fa-solid fa-trophy"></i></div>
-                <div class="stat-content">
-                    <span class="stat-label">ทั้งหมด</span>
-                    <span class="stat-value" id="statTotal">0</span>
-                </div>
-                <div class="stat-trend up"><i class="fa-solid fa-crown"></i></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- HERO SECTION (จัดกึ่งกลาง + ไม่ชนขอบ) -->
-    <!-- ========================================== -->
-    <div class="w-full max-w-4xl mx-auto px-4 py-8 text-center">
-        <h1 class="text-3xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent leading-tight">
-            Best Website E-commerce
-        </h1>
-        <p class="text-lg md:text-2xl font-semibold text-indigo-500 mb-4">Panderx Studio</p>
-        <p class="text-sm md:text-base text-slate-600 max-w-lg mx-auto mb-8 leading-relaxed px-4">
-            เริ่มต้นได้แล้ววันนี้ เช่าครั้งแรกราคาเพียง 99 บาททุกราคา!!
-        </p>
-        
-        <!-- ปุ่มจัดกึ่งกลาง + มี gap -->
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 px-4">
-            <button onclick="window.location.href='./homerent.html'" class="btn-liquid-glass w-full sm:w-auto px-8 py-3 text-base font-bold text-white rounded-full shadow-lg shadow-sky-500/30">
-                <i class="fa-solid fa-rocket mr-2"></i>เช่าเลย
-            </button>
-            <button id="heroLoginBtn" onclick="window.location.href='./login.html'" class="btn-liquid-white w-full sm:w-auto px-8 py-3 text-base font-bold rounded-full hidden" style="display:none;">
-                <i class="fa-solid fa-right-to-bracket mr-2"></i>เข้าสู่ระบบ
-            </button>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- ลบสินค้าแนะนำออก -->
-    <!-- ========================================== -->
-
-    <footer class="w-full max-w-6xl mx-auto px-4 py-8 text-center text-slate-400 text-sm mt-8 border-t border-slate-200">
-        <p>&copy; 2026 PanderX. All rights reserved.</p>
-    </footer>
-
-    <!-- Scripts -->
-    <script src="js/frontend/theme-toggle.js"></script>
-    <script src="js/frontend/stats-logic.js"></script>
-    <script type="module" src="js/frontend/theme-sync.js"></script>
-    <script type="module" src="js/frontend/announcement-bar.js"></script>
-    <script type="module" src="js/frontend/index.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const checkAuth = setInterval(() => {
-                if (window.auth) {
-                    clearInterval(checkAuth);
-                    window.auth.onAuthStateChanged(user => {
-                        const heroLoginBtn = document.getElementById('heroLoginBtn');
-                        if (heroLoginBtn) {
-                            heroLoginBtn.style.display = user ? 'none' : 'inline-block';
-                        }
-                    });
-                }
-            }, 100);
-            setTimeout(() => clearInterval(checkAuth), 5000);
-        });
-    </script>
-</body>
 ```
 
-### แก้ใน index.css
+### แก้ใน homerent.css
 ```css
-/* จัดกึ่งกลาง Stats บนมือถือ */
-@media (max-width: 768px) {
-    .stats-header-v2 > div {
-        justify-content: center !important;
+<style>
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.85);
+        --glass-border: rgba(255, 255, 255, 0.9);
+        --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
     }
-}
-
-/* ปรับ Hero Section ให้ไม่ชนขอบ และจัดกึ่งกลางสมบูรณ์แบบ */
-.text-center {
-    text-align: center;
-}
-
-/* ปุ่มเต็มความกว้างบนมือถือ แต่กึ่งกลาง */
-@media (max-width: 640px) {
-    .btn-liquid-glass,
-    .btn-liquid-white {
+    
+    html, body {
+        overflow-x: hidden;
         width: 100%;
-        max-width: 280px;
-        margin-left: auto;
-        margin-right: auto;
+        max-width: 100%;
     }
-}
-
-/* Stats Grid V2 (เหมือนเดิมแต่เพิ่มความสวยงาม) */
-.stats-grid-v2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-}
-
-@media (min-width: 768px) {
-    .stats-grid-v2 {
-        grid-template-columns: repeat(4, 1fr);
+    
+    body {
+        background: linear-gradient(135deg, #e0f2fe 0%, #f3e8ff 50%, #f8fafc 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
     }
-}
 
-.stat-card-v2 {
-    background: white;
-    border-radius: 16px;
-    padding: 1.25rem;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(226, 232, 240, 0.6);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
-}
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px 16px;
+    }
+    
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.875rem;
+        color: #64748b;
+        margin-bottom: 24px;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        width: fit-content;
+    }
+    
+    .breadcrumb a { 
+        color: #0ea5e9; 
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .breadcrumb a:hover { color: #0284c7; }
+    .breadcrumb span { color: #94a3b8; }
 
-.stat-card-v2:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-}
+    /* Liquid Glass Search Bar */
+    .search-bar-container {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 16px;
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), 
+                    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .search-bar-container:focus-within {
+        box-shadow: 0 8px 30px rgba(56, 189, 248, 0.15), 
+                    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        border-color: rgba(56, 189, 248, 0.3);
+        transform: translateY(-1px);
+    }
+    
+    .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        color: #1e293b;
+        background: transparent;
+        font-family: 'Prompt', sans-serif;
+    }
+    .search-input::placeholder { color: #94a3b8; }
 
-.stat-card-v2::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--stat-color) 0%, transparent 100%);
-}
+    /* Liquid Glass Action Buttons */
+    .action-btns {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 100px;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        cursor: pointer;
+        font-family: 'Prompt', sans-serif;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-action:active {
+        transform: translateY(0);
+    }
 
-.stat-today { --stat-color: #38bdf8; }
-.stat-week { --stat-color: #818cf8; }
-.stat-month { --stat-color: #34d399; }
-.stat-total { --stat-color: #fbbf24; }
+    .btn-black {
+        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    }
+    
+    .btn-black:hover {
+        box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
+    }
+    
+    .btn-white {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        color: #475569;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-white:hover {
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    /* Liquid Glass Data Table */
+    .data-table-container {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        text-align: left;
+    }
+    
+    .data-table th {
+        padding: 18px 20px;
+        background: rgba(241, 245, 249, 0.6);
+        color: #64748b;
+        font-weight: 600;
+        font-size: 0.875rem;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+        backdrop-filter: blur(10px);
+    }
+    
+    .data-table td {
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.4);
+        color: #334155;
+        font-size: 0.9375rem;
+        transition: background 0.2s;
+    }
+    
+    .data-table tr:hover td {
+        background: rgba(56, 189, 248, 0.03);
+    }
+    
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Glass Empty State */
+    .empty-state {
+        padding: 80px 20px;
+        text-align: center;
+        color: #94a3b8;
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        margin: 20px;
+        border: 2px dashed rgba(148, 163, 184, 0.3);
+    }
+    
+    /* Liquid Glass Pagination */
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 20px;
+        background: rgba(241, 245, 249, 0.5);
+        border-top: 1px solid rgba(226, 232, 240, 0.6);
+        color: #64748b;
+        font-size: 0.875rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .btn-page {
+        padding: 8px 18px;
+        border-radius: 12px;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        background: rgba(255, 255, 255, 0.7);
+        font-weight: 500;
+        transition: all 0.2s;
+        cursor: pointer;
+        color: #475569;
+        backdrop-filter: blur(10px);
+    }
+    
+    .btn-page:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: rgba(56, 189, 248, 0.4);
+        color: #0ea5e9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-page:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        background: rgba(241, 245, 249, 0.4);
+    }
 
-.stat-icon-bg {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    flex-shrink: 0;
-}
+    /* Profile Dropdown Standard - Right Aligned */
+    .profile-dropdown-container {
+        position: relative;
+    }
+    
+    .glass-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 280px;
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 16px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+        transform: scale(0.95) translateY(-10px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(20px);
+    }
+    
+    .glass-dropdown.active {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* Hamburger Animation */
+    .hamburger-btn {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        cursor: pointer;
+        padding: 8px;
+        transition: all 0.3s ease;
+        border-radius: 10px;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .hamburger-btn:hover {
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .hamburger-bar {
+        width: 18px;
+        height: 2px;
+        background: linear-gradient(90deg, #38bdf8, #818cf8);
+        border-radius: 2px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center;
+    }
+    
+    .hamburger-btn.active .hamburger-bar:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    
+    .hamburger-btn.active .hamburger-bar:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+    
+    .hamburger-btn.active .hamburger-bar:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
 
-.stat-today .stat-icon-bg { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #0284c7; }
-.stat-week .stat-icon-bg { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color: #4f46e5; }
-.stat-month .stat-icon-bg { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #059669; }
-.stat-total .stat-icon-bg { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 16px;
+        margin: 2px 8px;
+        color: #475569;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+        border-radius: 8px;
+    }
+    
+    .dropdown-item:hover {
+        background: rgba(56, 189, 248, 0.08);
+        color: #0ea5e9;
+    }
+    
+    .logout-item {
+        color: #ef4444 !important;
+        border-top: 1px solid rgba(226, 232, 240, 0.6);
+        margin-top: 4px !important;
+        border-radius: 0 0 8px 8px !important;
+    }
+    
+    .logout-item:hover {
+        background: rgba(239, 68, 68, 0.05) !important;
+    }
 
-.stat-content { flex: 1; min-width: 0; text-align: left; }
-.stat-label { display: block; font-size: 0.75rem; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
-.stat-value { display: block; font-size: 1.4rem; font-weight: 700; color: #1e293b; line-height: 1.2; }
+    .profile-trigger {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(226, 232, 240, 0.6);
+        border-radius: 100px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        backdrop-filter: blur(10px);
+    }
+    
+    .profile-trigger:hover {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(56, 189, 248, 0.3);
+        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.1);
+    }
+    
+    .profile-trigger.active {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: rgba(56, 189, 248, 0.5);
+    }
 
-.stat-trend {
-    width: 26px;
-    height: 26px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    color: #94a3b8;
-    background: #f1f5f9;
-}
+    .balance-pill {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        background: rgba(56, 189, 248, 0.1);
+        color: #0ea5e9;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+    
+    .avatar-glass {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+        color: white;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 0.875rem;
+        border: 2px solid white;
+        box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+    }
 
-.stat-trend.up { color: #10b981; background: #d1fae5; }
-
-@media (max-width: 640px) {
-    .stat-card-v2 { padding: 1rem; }
-    .stat-icon-bg { width: 38px; height: 38px; font-size: 1rem; }
-    .stat-value { font-size: 1.2rem; }
-}
+    /* Responsive */
+    @media (max-width: 640px) {
+        .action-btns {
+            justify-content: stretch;
+        }
+        
+        .btn-action {
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 14px 16px;
+        }
+    }
+</style>
 
 ```
-### แก้ใน index.js
-```javascript
-document.addEventListener('DOMContentLoaded', () => {
-    initAuth();
-    
-    // ลบ loadProducts ออก เพราะลบส่วนแสดงผลออกไปแล้ว
-    setTimeout(() => {
-        loadStats();
-        // loadProducts(); // ลบออก
-    }, 100);
-    
-    // ... ที่เหลือเหมือนเดิม
-});
+### แก้ใน homerent.css เพิ่มใน style
+```css
+/* Shimmer effect for empty state */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.empty-state {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(255, 255, 255, 0.4) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite;
+}
 
 ```
