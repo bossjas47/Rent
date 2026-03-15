@@ -246,11 +246,76 @@ function switchTab(t) {
 .btn-redeem       → gradient orange→amber
 .balance-pill     → sky tinted chip with diamond icon
 .avatar-glass     → round gradient avatar
-.glass-dropdown   → .active shows dropdown
+.glass-dropdown   → .active shows dropdown (RIGHT-ALIGNED: right: 0)
 .topup-tab        → .active = white bg + sky text
 .history-item     → white card, border-left 4px colored
 .status-badge     → rounded pill: pending=amber, approved=emerald, rejected=red
+.hamburger-btn    → 🆕 **MUST HAVE ANIMATION**: .active state transforms bars into X
+.hamburger-bar    → 🆕 **MUST HAVE ANIMATION**: transition all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
 ```
+
+---
+
+## 🎬 Hamburger UI Animation (Required for all pages)
+
+### HTML Structure
+```html
+<button id="hamburgerBtn" class="hamburger-btn" onclick="window.toggleSidebar(event)">
+    <span class="hamburger-bar"></span>
+    <span class="hamburger-bar"></span>
+    <span class="hamburger-bar"></span>
+</button>
+```
+
+### CSS Animation (CRITICAL)
+```css
+.hamburger-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    transition: all 0.3s ease;
+}
+.hamburger-bar {
+    width: 100%;
+    height: 2.5px;
+    background: #1e293b;
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+/* Transform to X shape when active */
+.hamburger-btn.active .hamburger-bar:nth-child(1) {
+    transform: rotate(45deg) translateY(12px);
+}
+.hamburger-btn.active .hamburger-bar:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+.hamburger-btn.active .hamburger-bar:nth-child(3) {
+    transform: rotate(-45deg) translateY(-12px);
+}
+```
+
+### JavaScript Logic (MUST ADD)
+```javascript
+window.toggleSidebar = function(e) {
+    if (e) e.stopPropagation();
+    document.getElementById('sidebarDrawer')?.classList.toggle('active');
+    document.getElementById('sidebarOverlay')?.classList.toggle('active');
+    document.getElementById('hamburgerBtn')?.classList.toggle('active'); // ← CRITICAL!
+};
+```
+
+### Profile Dropdown — RIGHT ALIGNED
+- **Position**: `position: absolute; right: 0;` (NOT left)
+- **Transform**: `scale(0.95) translateY(-10px)` → `scale(1) translateY(0)` on .active
+- **Container**: `.profile-dropdown-container { position: relative; }`
 
 ---
 
