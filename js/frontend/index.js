@@ -1,18 +1,20 @@
 /**
- * PanderX Index Page
- * เช็ค Role: admin, super_admin → แสดงปุ่ม Admin Panel
+ * PanderX Index Page - Frontend Module
+ * Path: js/frontend/index.js
+ * Connects to: js/firebase-config.js (parent directory)
  */
 
+// แก้ path จาก ./firebase-config.js เป็น ../firebase-config.js
 import { auth, db } from '../firebase-config.js';
 import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { doc, getDoc, collection, getDocs, query, where, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { doc, getDoc, collection, getDocs, query, where, orderBy, limit, serverTimestamp, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // ============================================
-// Utility Functions
+// Utility Functions (Security & Safety)
 // ============================================
 
 function escapeHtml(text) {
-    if (typeof text !== 'string') return '';
+    if (typeof text !== 'string') return String(text ?? '');
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
@@ -24,7 +26,7 @@ function formatBalance(num) {
     return n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// ใช้ ?? ไม่ใช่ || (ตาม SKILL.md)
+// ใช้ ?? ไม่ใช่ || (ตาม skill.md - Critical)
 function safeBalance(val) {
     return val ?? 0;
 }
@@ -34,12 +36,11 @@ function showToast(message, type = 'info') {
     if (!container) return;
     
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
+    toast.className = `toast toast-${escapeHtml(type)}`;
     toast.textContent = escapeHtml(message);
     container.appendChild(toast);
     
-    void toast.offsetWidth;
-    toast.classList.add('show');
+    requestAnimationFrame(() => toast.classList.add('show'));
     
     setTimeout(() => {
         toast.classList.remove('show');
@@ -47,87 +48,101 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
+// Expose สำหรับใช้จากภายนอก (globals)
+window.showToast = showToast;
+
 // ============================================
-// Admin Role Check (สำคัญ)
+// Admin Role Check
 // ============================================
 
-/**
- * เช็คว่าเป็น Admin หรือไม่ (รองรับทั้ง admin และ super_admin)
- * @param {string} role - role จาก Firestore
- * @returns {boolean}
- */
 function checkIsAdmin(role) {
     if (!role) return false;
     const r = String(role).toLowerCase().trim();
     return r === 'admin' || r === 'super_admin';
 }
 
-/**
- * แสดง UI สำหรับ Admin (ปุ่ม Admin Panel)
- */
 function showAdminUI() {
-    // แสดงใน Dropdown
     const dropdownBtn = document.getElementById('adminPanelBtn');
-    if (dropdownBtn) {
-        dropdownBtn.style.display = 'flex';
-    }
-    
-    // แสดงใน Sidebar
     const sidebarBtn = document.getElementById('sidebarAdminBtn');
-    if (sidebarBtn) {
-        sidebarBtn.style.display = 'flex';
-    }
+    
+    if (dropdownBtn) dropdownBtn.style.display = 'flex';
+    if (sidebarBtn) sidebarBtn.style.display = 'flex';
     
     console.log('[Admin] Admin UI activated');
 }
 
 // ============================================
-// UI Updates
+// UI Updates (ใช้ style.display เท่านั้น - ไม่ใช้ classList.hidden)
 // ============================================
 
 function updateBalanceDisplay(balance) {
     const fmt = formatBalance(balance);
-    const ids = ['userBalance', 'dropdownBalance', 'sidebarBalance'];
-    ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = (id === 'userBalance') ? fmt : fmt + ' ฿';
-    });
+    
+    // User balance (navbar)
+    const userBalance = document.getElementById('userBalance');
+    if (userBalance) userBalance.textContent = fmt;
+    
+    // Dropdown balance
+    const dropdownBalance = document.getElementById('dropdownBalance');
+    if (dropdownBalance) dropdownBalance.textContent = fmt + ' ฿';
+    
+    // Sidebar balance
+    const sidebarBalance = document.getElementById('sidebarBalance');
+    if (sidebarBalance) sidebarBalance.textContent = fmt;
 }
 
 function updateNameDisplay(name) {
     const cleanName = escapeHtml((name || 'ผู้ใช้').trim());
     const initial = cleanName.charAt(0).toUpperCase();
     
-    ['displayName', 'dropdownName', 'sidebarUsername'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = cleanName;
-    });
+    // Display names
+    const dropdownName = document.getElementById('dropdownName');
+    if (dropdownName) dropdownName.textContent = cleanName;
     
-    ['userAvatar', 'dropdownAvatar', 'sidebarAvatar'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = initial;
-    });
+    const sidebarUsername = document.getElementById('sidebarUsername');
+    if (sidebarUsername) sidebarUsername.textContent = cleanName;
+    
+    // Avatars
+    const userAvatar = document.getElementById('userAvatar');
+    if (userAvatar) userAvatar.textContent = initial;
+    
+    const dropdownAvatar = document.getElementById('dropdownAvatar');
+    if (dropdownAvatar) dropdownAvatar.textContent = initial;
+    
+    const sidebarAvatar = document.getElementById('sidebarAvatar');
+    if (sidebarAvatar) sidebarAvatar.textContent = initial;
 }
 
 // ============================================
 // Auth Management
 // ============================================
 
+let _authInitialized = false;
+let _lastUser = null;
+
 async function initAuth() {
     onAuthStateChanged(auth, async (user) => {
+        // Prevent duplicate processing
+        if (_authInitialized && user?.uid === _lastUser) return;
+        _lastUser = user ? user.uid : null;
+        _authInitialized = true;
+
+        // Elements
         const loginBtn = document.getElementById('loginBtn');
         const userProfile = document.getElementById('userProfile');
         const sidebarUserStrip = document.getElementById('sidebarUserStrip');
         const sidebarAuthGuest = document.getElementById('sidebarAuthGuest');
         const sidebarAuthUser = document.getElementById('sidebarAuthUser');
+        const heroLoginBtn = document.getElementById('heroLoginBtn');
 
         if (!user) {
-            // Guest mode
+            // Guest mode - ใช้ style.display เท่านั้น
             if (loginBtn) loginBtn.style.display = 'flex';
             if (userProfile) userProfile.style.display = 'none';
             if (sidebarUserStrip) sidebarUserStrip.style.display = 'none';
             if (sidebarAuthGuest) sidebarAuthGuest.style.display = 'block';
             if (sidebarAuthUser) sidebarAuthUser.style.display = 'none';
+            if (heroLoginBtn) heroLoginBtn.style.display = 'block';
             return;
         }
 
@@ -137,8 +152,9 @@ async function initAuth() {
         if (sidebarUserStrip) sidebarUserStrip.style.display = 'flex';
         if (sidebarAuthGuest) sidebarAuthGuest.style.display = 'none';
         if (sidebarAuthUser) sidebarAuthUser.style.display = 'block';
+        if (heroLoginBtn) heroLoginBtn.style.display = 'none';
 
-        // Optimistic UI
+        // Optimistic UI - แสดงชื่อจาก Auth ก่อน
         const authName = user.displayName || user.email?.split('@')[0] || 'ผู้ใช้';
         updateNameDisplay(authName);
         updateBalanceDisplay(0);
@@ -146,6 +162,7 @@ async function initAuth() {
         // Load from Firestore
         try {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
+            
             if (userDoc.exists()) {
                 const data = userDoc.data();
                 
@@ -153,21 +170,32 @@ async function initAuth() {
                 const displayName = data.displayName?.trim() || authName;
                 updateNameDisplay(displayName);
                 
-                // Update balance (ใช้ ?? ตาม SKILL.md)
+                // Update balance (ใช้ ?? ไม่ใช่ ||)
                 const balance = safeBalance(data.balance);
                 updateBalanceDisplay(balance);
                 
-                // ============================================
-                // เช็ค Role และแสดง Admin Panel
-                // ============================================
-                const userRole = data.role;
-                if (checkIsAdmin(userRole)) {
+                // Check role
+                if (checkIsAdmin(data.role)) {
                     showAdminUI();
                 }
+            } else {
+                // Ghost user repair - สร้าง doc ให้อัตโนมัติ
+                console.log('[Auth] Creating missing user doc for:', user.uid);
+                await setDoc(doc(db, 'users', user.uid), {
+                    uid: user.uid,
+                    email: user.email || '',
+                    displayName: user.displayName || user.email?.split('@')[0] || 'ผู้ใช้',
+                    balance: 0,
+                    role: 'user',
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+                updateBalanceDisplay(0);
             }
         } catch (err) {
-            console.error('Auth error:', err);
-            showToast('โหลดข้อมูลไม่สำเร็จ', 'error');
+            console.error('[Auth] Error:', err);
+            // Fallback - ไม่ทิ้งว่าง
+            updateBalanceDisplay(0);
         }
     });
 }
@@ -177,19 +205,17 @@ async function initAuth() {
 // ============================================
 
 async function loadStats() {
+    const ageEl = document.getElementById('serviceAge');
+    const todayEl = document.getElementById('statToday');
+    const weekEl = document.getElementById('statWeek');
+    const monthEl = document.getElementById('statMonth');
+    const totalEl = document.getElementById('statTotal');
+    
     try {
         const snap = await getDoc(doc(db, 'system', 'stats'));
-        let data = {};
-        
-        if (snap.exists()) {
-            data = snap.data();
-        } else {
-            const q = query(collection(db, 'orders'), where('status', '==', 'approved'));
-            const orders = await getDocs(q);
-            data.totalCount = orders.size;
-        }
+        const data = snap.exists() ? snap.data() : {};
 
-        const ageEl = document.getElementById('serviceAge');
+        // Service age
         if (ageEl && data.launchDate?.toDate) {
             const days = Math.floor((Date.now() - data.launchDate.toDate()) / 86400000);
             ageEl.textContent = `ให้บริการมาแล้ว ${days.toLocaleString('th-TH')} วัน`;
@@ -197,34 +223,63 @@ async function loadStats() {
             ageEl.textContent = 'บริการเว็บไซต์สำเร็จรูปคุณภาพสูง';
         }
 
+        // Stats (ใช้ ?? ไม่ใช่ ||)
         const stats = {
-            'statToday': data.todayCount ?? 0,
-            'statWeek': data.weekCount ?? 0,
-            'statMonth': data.monthCount ?? 0,
-            'statTotal': data.totalCount ?? 0
+            today: data.todayCount ?? 0,
+            week: data.weekCount ?? 0,
+            month: data.monthCount ?? 0,
+            total: data.totalCount ?? 0
         };
 
-        Object.entries(stats).forEach(([id, val]) => {
-            const el = document.getElementById(id);
-            if (el) el.textContent = Number(val).toLocaleString('th-TH');
-        });
+        if (todayEl) animateNumber(todayEl, stats.today);
+        if (weekEl) animateNumber(weekEl, stats.week);
+        if (monthEl) animateNumber(monthEl, stats.month);
+        if (totalEl) animateNumber(totalEl, stats.total);
+        
     } catch (err) {
-        console.error('Stats error:', err);
+        console.error('[Stats] Error:', err);
+        if (ageEl) ageEl.textContent = 'บริการเว็บไซต์สำเร็จรูปคุณภาพสูง';
+        // แสดง 0 เมื่อ error
+        if (todayEl) todayEl.textContent = '0';
+        if (weekEl) weekEl.textContent = '0';
+        if (monthEl) monthEl.textContent = '0';
+        if (totalEl) totalEl.textContent = '0';
     }
+}
+
+function animateNumber(el, target) {
+    const t = Number(target) || 0;
+    if (!t) {
+        el.textContent = '0';
+        return;
+    }
+    
+    const start = performance.now();
+    const duration = 800;
+    
+    function step(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(t * ease);
+        el.textContent = current.toLocaleString('th-TH');
+        
+        if (progress < 1) requestAnimationFrame(step);
+    }
+    
+    requestAnimationFrame(step);
 }
 
 async function loadProducts() {
     const grid = document.getElementById('productsGrid');
     if (!grid) return;
 
-    // Show skeleton
-    grid.innerHTML = Array(4).fill(0).map(() => `
-        <div class="bg-white p-3 rounded-xl border border-slate-200 animate-pulse">
-            <div class="bg-slate-200 rounded-lg w-full aspect-video mb-3"></div>
-            <div class="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
-            <div class="h-3 bg-slate-200 rounded w-1/2"></div>
+    // Loading state (spinner ไม่ใช่ skeleton)
+    grid.innerHTML = `
+        <div class="col-span-full flex items-center justify-center py-12 text-slate-400 gap-3">
+            <div class="w-6 h-6 border-2 border-slate-200 border-t-sky-500 rounded-full animate-spin"></div>
+            <span>กำลังโหลดสินค้า...</span>
         </div>
-    `).join('');
+    `;
 
     try {
         const q = query(
@@ -237,26 +292,46 @@ async function loadProducts() {
         const snap = await getDocs(q);
         
         if (snap.empty) {
-            grid.innerHTML = '<p class="text-slate-400 text-center col-span-full py-8">ยังไม่มีสินค้า</p>';
+            grid.innerHTML = `
+                <div class="col-span-full text-center py-12 text-slate-400">
+                    <i class="fa-solid fa-box-open text-4xl mb-3 block"></i>
+                    <p>ยังไม่มีสินค้า</p>
+                </div>
+            `;
             return;
         }
 
         let html = '';
-        snap.forEach((doc, index) => {
-            const p = doc.data();
+        snap.forEach((docSnap) => {
+            const p = docSnap.data();
             const name = escapeHtml(p.name || 'ไม่มีชื่อ');
             const price = Number(p.price || 0).toLocaleString('th-TH');
             const img = p.imageUrl ? escapeHtml(p.imageUrl) : null;
+            const category = escapeHtml(p.category || 'ทั่วไป');
             
             html += `
-                <div class="bg-white p-3 rounded-xl border border-slate-200 hover:shadow-md transition-all cursor-pointer" data-product-index="${index}">
-                    <div class="aspect-video rounded-lg bg-gradient-to-br from-sky-100 to-purple-100 mb-3 overflow-hidden">
-                        ${img ? `<img src="${img}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'">` : ''}
+                <div class="product-card" data-id="${escapeHtml(docSnap.id)}">
+                    <div class="product-image-wrap">
+                        ${img ? `
+                            <img src="${img}" class="product-img" loading="lazy" alt="${name}"
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-full text-slate-400 text-xs\'>ไม่มีรูปภาพ</div>'">
+                        ` : `
+                            <div class="flex items-center justify-center h-full text-slate-400 text-xs">
+                                ไม่มีรูปภาพ
+                            </div>
+                        `}
                     </div>
-                    <h3 class="font-semibold text-slate-800 text-sm mb-1 line-clamp-2">${name}</h3>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sky-600 font-bold text-sm">${price} ฿</span>
-                        <button class="bg-gradient-to-r from-sky-400 to-indigo-400 text-white text-xs px-3 py-1.5 rounded-full product-rent-btn">
+                    <div class="product-info">
+                        <div class="product-name">${name}</div>
+                        <div class="text-xs text-slate-500 mt-0.5">${category}</div>
+                    </div>
+                    <div class="product-footer">
+                        <div>
+                            <div class="product-price">${price}</div>
+                            <div class="product-price-unit">บาท</div>
+                        </div>
+                        <button onclick="event.stopPropagation(); window.location.href='./homerent.html'" 
+                                class="bg-gradient-to-r from-sky-400 to-indigo-400 text-white text-xs px-3 py-1.5 rounded-full hover:shadow-md transition-all">
                             เช่า
                         </button>
                     </div>
@@ -266,39 +341,39 @@ async function loadProducts() {
         
         grid.innerHTML = html;
         
-        // Add event listeners instead of inline onclick
-        grid.querySelectorAll('[data-product-index]').forEach(card => {
-            card.addEventListener('click', (e) => {
-                if (!e.target.closest('.product-rent-btn')) {
-                    window.location.href = './homerent.html';
-                }
-            });
-            
-            card.querySelector('.product-rent-btn')?.addEventListener('click', (e) => {
-                e.stopPropagation();
+        // Click handlers
+        grid.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', () => {
                 window.location.href = './homerent.html';
             });
         });
+        
     } catch (err) {
-        console.error('Products error:', err);
-        grid.innerHTML = '<p class="text-slate-400 text-center col-span-full py-8">ไม่สามารถโหลดสินค้าได้</p>';
+        console.error('[Products] Error:', err);
+        grid.innerHTML = `
+            <div class="col-span-full text-center py-12 text-red-500">
+                <i class="fa-solid fa-circle-exclamation text-4xl mb-3 block"></i>
+                <p class="font-medium">ไม่สามารถโหลดสินค้าได้</p>
+                <button onclick="window.location.reload()" class="mt-3 px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors">
+                    ลองใหม่
+                </button>
+            </div>
+        `;
     }
 }
 
 // ============================================
-// Event Handlers (ครบถ้วน)
+// Event Handlers (Expose ทั้งหมดไว้ที่ window)
 // ============================================
 
 window.toggleProfileDropdown = function(e) {
     e?.stopPropagation();
     const dropdown = document.getElementById('profileDropdown');
     const arrow = document.getElementById('dropdownArrow');
-    const trigger = document.getElementById('profileTrigger');
     
     if (dropdown) {
         const isActive = dropdown.classList.toggle('active');
         if (arrow) arrow.style.transform = isActive ? 'rotate(180deg)' : '';
-        if (trigger) trigger.classList.toggle('active', isActive);
     }
 };
 
@@ -337,6 +412,7 @@ window.toggleSidebar = function(e) {
     const btn = document.getElementById('hamburgerBtn');
     
     if (!drawer) return;
+    
     const isOpen = drawer.classList.toggle('open');
     
     if (overlay) overlay.classList.toggle('open', isOpen);
@@ -367,8 +443,12 @@ window.closeSidebar = function() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initAuth();
-    setTimeout(loadStats, 100);
-    setTimeout(loadProducts, 200);
+    
+    // Load data
+    setTimeout(() => {
+        loadStats();
+        loadProducts();
+    }, 100);
     
     // Close dropdown when click outside
     document.addEventListener('click', (e) => {
@@ -381,11 +461,17 @@ document.addEventListener('DOMContentLoaded', () => {
             dropdown.classList.remove('active');
             const arrow = document.getElementById('dropdownArrow');
             if (arrow) arrow.style.transform = '';
-            trigger.classList.remove('active');
         }
     });
     
+    // Close sidebar with Escape key
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeSidebar();
+        if (e.key === 'Escape') {
+            window.closeSidebar();
+        }
     });
 });
+
+// Expose auth สำหรับ scripts อื่นที่ไม่ใช่ module (เช่น theme-toggle.js, stats-logic.js)
+window.auth = auth;
+window.db = db;

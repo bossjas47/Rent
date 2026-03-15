@@ -967,3 +967,4 @@ if (!snap.exists()) {
 - หรือใช้ `gsutil cors set cors.json gs://psl-esport.firebasestorage.app`
 - cors.json: `[{"origin":["*"],"method":["GET","POST","PUT"],"maxAgeSeconds":3600}]`
 
+### ทุกครั้งที่มีการสั่งงานต้องแยกไฟล์ css js html ตลอด และจดบันทึกลง message.md ทุกครั้ง และย้ำว่าในไฟล์มีการนำทางของไฟล์ที่ถูกอยู่แล้ว อย่าแก้นอกจากผู้ใช้สั่ง
