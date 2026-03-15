@@ -24,7 +24,7 @@ function switchTab(tabName, element) {
         payments: 'ช่องทางชำระเงิน',
         products: 'จัดการสินค้า',
         roles: 'จัดการยศและสิทธิ์',
-        theme: 'ธีม & สีเว็บไซต์',
+
         'site-settings': 'จัดการทั่วไป & SEO',
         'fake-stats': 'ข้อมูล Fake / Display Stats',
         settings: 'ความปลอดภัย'
@@ -39,7 +39,7 @@ function switchTab(tabName, element) {
         payments: 'credit-card',
         products: 'box',
         roles: 'user-shield',
-        theme: 'palette',
+
         'site-settings': 'globe',
         'fake-stats': 'wand-magic-sparkles',
         settings: 'lock'

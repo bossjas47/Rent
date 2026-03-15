@@ -210,40 +210,7 @@
     border-radius: 4px;
 }
 
-/* ============================================
-   Dark Mode Support (Optional)
-   ============================================ */
 
-@media (prefers-color-scheme: dark) {
-    .settings-card {
-        background: #1e293b;
-        border-color: rgba(148, 163, 184, 0.2);
-    }
-
-    .settings-row {
-        border-bottom-color: rgba(148, 163, 184, 0.2);
-    }
-
-    .settings-row:hover {
-        background-color: rgba(100, 116, 139, 0.1);
-    }
-
-    .settings-row-label {
-        color: #f1f5f9;
-    }
-
-    .settings-row-desc {
-        color: #cbd5e1;
-    }
-
-    .toggle-slider {
-        background-color: #475569;
-    }
-
-    .toggle-slider::before {
-        background-color: #e2e8f0;
-    }
-}
 
 /* ============================================
    Danger Label

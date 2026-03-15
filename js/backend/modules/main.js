@@ -2,7 +2,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { loadTheme } from './theme.js';
+
 import { loadSiteSettings } from './settings.js';
 import { updateRentalStats } from './mock-data.js';
 
@@ -26,8 +26,7 @@ window.db = db;
 // Initialize App
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // Load saved theme
-        await loadTheme();
+
         
         // Load site settings
         await loadSiteSettings();

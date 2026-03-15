@@ -472,6 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Expose auth สำหรับ scripts อื่นที่ไม่ใช่ module (เช่น theme-toggle.js, stats-logic.js)
+// Expose auth สำหรับ scripts อื่นที่ไม่ใช่ module (เช่น stats-logic.js)
 window.auth = auth;
 window.db = db;

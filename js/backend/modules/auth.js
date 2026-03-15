@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         await initSystem();
         setupTopupRealtime();
         initCustomDropdowns();
-        loadTheme().catch(()=>{});  // load saved theme on startup
+
     } catch (error) {
         console.error('Firebase Error:', error);
         showError('ไม่สามารถโหลด Firebase: ' + error.message);

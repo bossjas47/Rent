@@ -26,8 +26,7 @@ if (!window.StatsLogic) {
             // อัปเดต UI
             this.updateStatsUI();
             
-            // ฟังการเปลี่ยนแปลง theme
-            window.addEventListener('themechange', () => this.updateStatsUI());
+
         }
 
         generateCoherentStats() {

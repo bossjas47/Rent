@@ -429,124 +429,7 @@ export async function initDiscordLink(id = "discordLink") {
     } catch {}
 }
 
-// ─── Theme Management (เดิม ปรับให้รองรับ Tenant) ─────────────────────────────
-export async function getTheme() {
-    try {
-        // 🎨 ถ้ามี Tenant ให้ดึงธีมของ Tenant นั้น ถ้าไม่มีใช้ system default
-        const themePath = currentWebsiteId 
-            ? doc(db, "websites", currentWebsiteId, "settings", "theme")
-            : doc(db, "system", "theme");
 
-        const snap = await getDoc(themePath);
-        if (snap.exists()) {
-            _themeConfig = snap.data();
-            _themeTs = Date.now();
-            return _themeConfig;
-        }
-    } catch (error) {
-        console.error("Error fetching theme:", error);
-    }
-
-    return {
-        primary: "#38bdf8",
-        secondary: "#818cf8", 
-        bgStart: "#e0f2fe",
-        bgMid: "#f3e8ff",
-        bgEnd: "#f8fafc",
-        logoUrl: "",
-        siteName: "PanderX",
-        customCSS: ""
-    };
-}
-
-export async function saveTheme(themeData) {
-    try {
-        // 🎨 ถ้าเป็น Tenant Admin ให้บันทึกลง websites/{id}/settings/theme
-        const themePath = currentWebsiteId && isTenantAdmin()
-            ? doc(db, "websites", currentWebsiteId, "settings", "theme")
-            : doc(db, "system", "theme");
-
-        await setDoc(themePath, {
-            ...themeData,
-            updatedAt: serverTimestamp(),
-            updatedBy: auth.currentUser?.uid || null
-        }, { merge: true });
-
-        _themeConfig = { ..._themeConfig, ...themeData };
-        return true;
-    } catch (error) {
-        console.error("Error saving theme:", error);
-        throw error;
-    }
-}
-
-export async function applyTheme(theme = null) {
-    const t = theme || await getTheme();
-
-    const root = document.documentElement;
-    root.style.setProperty('--primary', t.primary || '#38bdf8');
-    root.style.setProperty('--primary-dark', t.primary ? adjustBrightness(t.primary, -20) : '#0ea5e9');
-    root.style.setProperty('--secondary', t.secondary || '#818cf8');
-    root.style.setProperty('--bg-gradient-start', t.bgStart || '#e0f2fe');
-    root.style.setProperty('--bg-gradient-mid', t.bgMid || '#f3e8ff');
-    root.style.setProperty('--bg-gradient-end', t.bgEnd || '#f8fafc');
-    root.style.setProperty('--text-primary', t.textColor || '#1e293b');
-    root.style.setProperty('--glass-bg', t.glassBg || 'rgba(255, 255, 255, 0.8)');
-
-    if (t.siteName) {
-        document.title = document.title.replace('PanderX', t.siteName);
-        const logoTexts = document.querySelectorAll('.site-name, .logo-text');
-        logoTexts.forEach(el => el.textContent = t.siteName);
-    }
-
-    if (t.logoUrl) {
-        const logos = document.querySelectorAll('.site-logo');
-        logos.forEach(el => {
-            if (el.tagName === 'IMG') el.src = t.logoUrl;
-            else {
-                const img = document.createElement('img');
-                img.src = t.logoUrl;
-                img.className = el.className;
-                img.alt = t.siteName || 'Logo';
-                img.onerror = () => {
-                    img.replaceWith(document.createTextNode(t.siteName?.[0] || 'P'));
-                };
-                el.replaceWith(img);
-            }
-        });
-    }
-
-    if (t.customCSS) {
-        let styleEl = document.getElementById('custom-theme-css');
-        if (!styleEl) {
-            styleEl = document.createElement('style');
-            styleEl.id = 'custom-theme-css';
-            document.head.appendChild(styleEl);
-        }
-        styleEl.textContent = t.customCSS;
-    }
-
-    return t;
-}
-
-export function subscribeTheme(callback) {
-    // 🎨 Subscribe ธีมของ Tenant ถ้ามี
-    const themePath = currentWebsiteId 
-        ? doc(db, "websites", currentWebsiteId, "settings", "theme")
-        : doc(db, "system", "theme");
-
-    return onSnapshot(themePath, (snap) => {
-        if (snap.exists()) {
-            const data = snap.data();
-            _themeConfig = data;
-            _themeTs = Date.now();
-            if (callback) callback(data);
-            if (!window.location.pathname.includes('admin')) {
-                applyTheme(data);
-            }
-        }
-    });
-}
 
 // ─── Admin Authorization (เดิม ปรับให้ใช้ Tenant Role) ────────────────────────
 /**
@@ -769,7 +652,7 @@ export default {
     setupTenantAuthListener, logoutTenant,
     // Legacy
     getSiteConfig, getAppConfig, getEasySlipKey, initDiscordLink,
-    getTheme, saveTheme, applyTheme, subscribeTheme,
+
     isAdmin, requireAdmin, getSystemConfig, checkMaintenanceMode, saveSystemConfig,
     getAllUsers, getTenantUsers, updateUserStatus, subscribeOrders, getDashboardStats,
     COLLECTIONS, ROLES
@@ -791,11 +674,6 @@ if (typeof window !== 'undefined') {
             }
         }
 
-        // Auto apply theme (ถ้าไม่มี Tenant จะใช้ default)
-        try {
-            await applyTheme();
-        } catch (e) {
-            console.error("Auto-apply theme failed:", e);
-        }
+
     });
 }
